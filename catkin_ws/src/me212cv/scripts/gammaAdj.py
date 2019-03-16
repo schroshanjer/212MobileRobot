@@ -27,7 +27,7 @@ rospy.init_node('gamma', anonymous=True)
 cv_bridge = CvBridge()
 
 def main():
-    rospy.Subscriber('/camera/rgb/image_rect_color', Image, rosHTransformCallback)
+    rospy.Subscriber('/camera/rgb/image_raw', Image, rosHTransformCallback)
     print("Subscribing")
     rospy.spin()
 
