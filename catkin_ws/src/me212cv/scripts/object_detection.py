@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
-# 2.12 Lab 4 object detection: a node for detecting objects
+# 2.12 Lab 7 object detection: a node for detecting objects
 # Peter Yu Oct 2016
+# Jacob Guggenheim 2019
+# Jerry Ng 2019
 
 import rospy
 import numpy as np
@@ -43,8 +45,8 @@ cx = msg.P[2]
 cy = msg.P[6]
 
 def main():
-    useHSV   = False
-    useDepth = False
+    useHSV   = True
+    useDepth = True
     if not useHSV:
         # Task 1
         # subscribe to image
@@ -115,17 +117,17 @@ def rosHSVProcessCallBack(msg):
 # Task 2 object detection code
 def HSVObjectDetection(cv_image, toPrint = True):
     # convert image to HSV color space
-    # hsv_image = ??
+    hsv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
     
     # define range of red color in HSV
-    # lower_red = ??
-    # upper_red = ??
+    lower_red = np.array([170,50,50])
+    upper_red = np.array([180,255,255])
 
     # Threshold the HSV image to get only red colors
-    # mask = ??
+    mask = cv2.inRange(hsv_image, lower_red, upper_red)
     
-    # mask_eroded         = ??
-    # mask_eroded_dilated = ??
+    mask_eroded = cv2.erode(mask, None, iterations = 3)
+    mask_eroded_dilated = cv2.dilate(mask_eroded, None, iterations = 10)
     
     if toPrint:
         print 'hsv', hsv_image[240][320] # the center point hsv
@@ -162,15 +164,15 @@ def rosRGBDCallBack(rgb_data, depth_data):
 
 def getXYZ(xp, yp, zc, fx,fy,cx,cy):
     
-    # xp = np.array(([?],[?],[?]))
+    xp = np.array(([xp],[yp],[1]))
     #
     # Homogenous Transform matrix
-    # K = np.matrix([(?, ?, ?),(?, ?, ?),(?, ?, ?)])
+    K = np.matrix([(fx, 0, cx),(0, fy, cy),(0, 0, 1)])
     # 
     # Hint: inv() returns the inverse of a matrix
-    # xn = ?
-    # 
-    # xc = ?
+    xd = inv(K)*xp
+    xn = xd
+    xc = np.array([xd[0]*zc, xd[1]*zc, zc])
     return (xc[0],xc[1],xc[2])
 
 
@@ -190,9 +192,11 @@ def showImage(cv_image, mask_erode_image, mask_image):
     #  cv2.waitKey(3)
     
     # Publish the images to ROS and show it in rviz
-    img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
-    img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
-    img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
+    
+    #TO DO: IF YOU WANT TO. You can uncomment these images but it may cause RVIZ to crash.
+    #img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
+    #img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
+    #img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
     img_pub4.publish(cv_bridge.cv2_to_imgmsg(res, encoding="passthrough"))
 
 # Create a pyramid using 4 triangles
