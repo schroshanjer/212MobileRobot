@@ -1,7 +1,10 @@
 #!/usr/bin/python
 
-# 2.12 Lab 4 object detection: a node for de-noising
+# 2.12 Lab 7 object detection: a node for adjusting gamma
 # Luke Roberto Oct 2017
+# Jacob Guggenheim 2019
+# Jerry Ng 2019
+
 
 import rospy
 import numpy as np
