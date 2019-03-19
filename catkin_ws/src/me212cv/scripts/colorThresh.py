@@ -66,7 +66,6 @@ def main():
 def colorThreshCallback(msg):
     # convert ROS image to opencv format
 
-    print('here')
     i = 0
     try:
         cv_image = cv_bridge.imgmsg_to_cv2(msg, "bgr8")

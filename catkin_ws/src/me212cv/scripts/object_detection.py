@@ -185,18 +185,18 @@ def showImage(cv_image, mask_erode_image, mask_image):
     cv2.line(cv_image, (325, 240), (315, 240), (255,0,0))
     
     # Show the images in cv window (may freeze in ROS Kinetic/16.04)
-    #  cv2.imshow('OpenCV_Original', cv_image)
+    cv2.imshow('OpenCV_Original', cv_image)
     #  cv2.imshow('OpenCV_Mask_Erode', mask_erode_image)
     #  cv2.imshow('OpenCV_Mask_Dilate', mask_image)
-    #  cv2.imshow('OpenCV_View', res)
-    #  cv2.waitKey(3)
+    cv2.imshow('OpenCV_View', res)
+    cv2.waitKey(3)
     
     # Publish the images to ROS and show it in rviz
     
     #TO DO: IF YOU WANT TO. You can uncomment these images but it may cause RVIZ to crash.
-    #img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
-    #img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
-    #img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
+    img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
+    img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
+    img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
     img_pub4.publish(cv_bridge.cv2_to_imgmsg(res, encoding="passthrough"))
 
 # Create a pyramid using 4 triangles
