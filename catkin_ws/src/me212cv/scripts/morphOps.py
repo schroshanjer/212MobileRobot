@@ -77,6 +77,12 @@ def morphOpsCallback(msg):
     #TODO: Change size of kernel
     # Also, try changing the shape of the kernel (places 1's in certain locations). Try making a circle/line/etc.
     kernel = np.ones((7,7),np.uint8)
+
+    # EXAMPLE OF A VERTICAL LINE:
+    #kernel = np.array([[0, 1, 0, 0],\
+    #                [0, 1, 0, 0 ],\
+    #                [0, 1, 0, 0 ],\
+    #                [0, 1, 0, 0]], dtype=np.uint8)
     
     #TODO: Change number of iterations to see the effect.
     num_iterations = 3

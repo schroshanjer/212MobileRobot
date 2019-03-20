@@ -194,9 +194,9 @@ def showImage(cv_image, mask_erode_image, mask_image):
     # Publish the images to ROS and show it in rviz
     
     #TO DO: IF YOU WANT TO. You can uncomment these images but it may cause RVIZ to crash.
-    img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
-    img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
-    img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
+    #img_pub1.publish(cv_bridge.cv2_to_imgmsg(cv_image, encoding="passthrough"))
+    #img_pub2.publish(cv_bridge.cv2_to_imgmsg(mask_erode_image, encoding="passthrough"))
+    #img_pub3.publish(cv_bridge.cv2_to_imgmsg(mask_image, encoding="passthrough"))
     img_pub4.publish(cv_bridge.cv2_to_imgmsg(res, encoding="passthrough"))
 
 # Create a pyramid using 4 triangles
