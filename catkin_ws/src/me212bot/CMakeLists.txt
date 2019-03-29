@@ -16,10 +16,9 @@ find_package(catkin REQUIRED COMPONENTS
 ################################################
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  WheelVelCmd.msg
-)
+# add_message_files(
+#   FILES
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -36,10 +35,10 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+generate_messages(
 #   DEPENDENCIES
 #   geometry_msgs#   std_msgs
-# )
+)
 
 
 
