@@ -21,9 +21,9 @@ br = tf.TransformBroadcaster()
 
 class Cmd(object):
     """docstring for Cmd"""
-    def __init__(self, arg):
+    def __init__(self):
         super(Cmd, self).__init__()
-        self.arg = arg
+        # self.arg = arg
         self.turn_direction=1
         self.turn_cd=0
         self.run_dir=0
