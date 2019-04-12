@@ -18,6 +18,18 @@ from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2posel
 rospy.init_node('tele_op', anonymous=True)
 lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
+
+class Cmd(object):
+    """docstring for Cmd"""
+    def __init__(self, arg):
+        super(Cmd, self).__init__()
+        self.arg = arg
+        self.turn_direction=1
+        self.turn_cd=0
+        self.run_dir=0
+
+self=Cmd()
+
     
 def main():
     #apriltag_sub = rospy.Subscriber("/apriltags/detections", AprilTagDetections, apriltag_callback, queue_size = 1)
