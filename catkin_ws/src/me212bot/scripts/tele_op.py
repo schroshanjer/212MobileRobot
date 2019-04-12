@@ -30,6 +30,7 @@ def send_vel_loop():
         if cmd=='w':
             wcv.desiredWV_R = 0.1
             wcv.desiredWV_L = 0.1
+            print 'haha'
         elif cmd=='a':
             wcv.desiredWV_R = 0.2
             wcv.desiredWV_L = 0.1
