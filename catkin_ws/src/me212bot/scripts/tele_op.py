@@ -44,11 +44,11 @@ def cmd_vel_loop():
         cmd=raw_input()
         
         #cmd='w'
-        print 'test'
+        #print 'test'
         if cmd=='w':
             wcv.desiredWV_R = 0.1
             wcv.desiredWV_L = 0.1
-            print 'haha'
+            #print 'haha'
         elif cmd=='a':
             wcv.desiredWV_R = 0.2
             wcv.desiredWV_L = 0.1
