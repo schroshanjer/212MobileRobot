@@ -20,7 +20,7 @@ lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
     
 def main():
-    apriltag_sub = rospy.Subscriber("/apriltags/detections", AprilTagDetections, apriltag_callback, queue_size = 1)
+    #apriltag_sub = rospy.Subscriber("/apriltags/detections", AprilTagDetections, apriltag_callback, queue_size = 1)
     
     rospy.sleep(1)
     
@@ -67,15 +67,15 @@ def cmd_vel_loop():
         rate.sleep() 
 
 ## apriltag msg handling function (Need to modify for Task 2)
-def apriltag_callback(data):
-    # use apriltag pose detection to find where is the robot
-    for detection in data.detections:
-        if detection.id == 1:   # tag id is the correct one
-            poselist_tag_cam = pose2poselist(detection.pose)
-            poselist_tag_base = transformPose(lr, poselist_tag_cam, 'camera', 'robot_base')
-            poselist_base_tag = invPoselist(poselist_tag_base)
-            poselist_base_map = transformPose(lr, poselist_base_tag, 'apriltag', 'map')
-            pubFrame(br, pose = poselist_base_map, frame_id = '/robot_base', parent_frame_id = '/map')
+# def apriltag_callback(data):
+#     # use apriltag pose detection to find where is the robot
+#     for detection in data.detections:
+#         if detection.id == 1:   # tag id is the correct one
+#             poselist_tag_cam = pose2poselist(detection.pose)
+#             poselist_tag_base = transformPose(lr, poselist_tag_cam, 'camera', 'robot_base')
+#             poselist_base_tag = invPoselist(poselist_tag_base)
+#             poselist_base_map = transformPose(lr, poselist_base_tag, 'apriltag', 'map')
+#             pubFrame(br, pose = poselist_base_map, frame_id = '/robot_base', parent_frame_id = '/map')
 
 
 
