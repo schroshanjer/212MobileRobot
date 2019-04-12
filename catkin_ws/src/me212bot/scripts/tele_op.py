@@ -31,6 +31,9 @@ def main():
     # else:
     #     thread = threading.Thread(target = navi_loop)
     # thread.start()
+    self.turn_direction=1
+    self.turn_cd=0
+    self.run_dir=0
     
     rospy.spin()
 
@@ -46,21 +49,45 @@ def cmd_vel_loop():
         #cmd='w'
         #print 'test'
         if cmd=='w':
-            wcv.desiredWV_R = 0.1
-            wcv.desiredWV_L = 0.1
+            self.run_dir=1.
+            # wcv.desiredWV_R = 0.1
+            # wcv.desiredWV_L = 0.1
             #print 'haha'
         elif cmd=='a':
-            wcv.desiredWV_R = 0.2
-            wcv.desiredWV_L = 0.1
+            self.turn_direction=-1
+            self.turn_cd=4
+            
         elif cmd=='d':
-            wcv.desiredWV_R = 0.1
-            wcv.desiredWV_L = 0.2
+            self.turn_direction=-1
+            self.turn_cd=4
+            
         elif cmd=='s':
-            wcv.desiredWV_R = -0.1
-            wcv.desiredWV_L = -0.1
+            self.run_dir=-1.
+            
         else:
+            self.run_dir=0.
+
+        if self.turn_cd>0:
+            if self.turn_direction==-1:
+                wcv.desiredWV_R = 0.2
+                wcv.desiredWV_L = 0.1
+            elif self.turn_direction==1:
+                wcv.desiredWV_R = 0.1
+                wcv.desiredWV_L = 0.2
+            else:
+                wcv.desiredWV_R = 0.
+                wcv.desiredWV_L = 0.
+            self.turn_cd-=1
+        elif run_dir>0:
+            wcv.desiredWV_R = 0.1
+            wcv.desiredWV_L = 0.1
+        elif run_dir<0:
             wcv.desiredWV_R = 0.
             wcv.desiredWV_L = 0.
+        else:
+            wcv.desiredWV_R = -0.1
+            wcv.desiredWV_L = -0.1
+
         
         velcmd_pub.publish(wcv) 
         
