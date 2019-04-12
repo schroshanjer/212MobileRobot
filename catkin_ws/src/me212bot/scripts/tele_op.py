@@ -15,7 +15,7 @@ from apriltags.msg import AprilTagDetections
 from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad
 
 
-rospy.init_node('apriltag_navi', anonymous=True)
+rospy.init_node('tele_op', anonymous=True)
 lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
     
@@ -25,7 +25,7 @@ def main():
     rospy.sleep(1)
     
     constant_vel = True
-    constant_vel_loop()
+    cmd_vel_loop()
     # if constant_vel:
     #     thread = threading.Thread(target = constant_vel_loop)
     # else:
@@ -35,7 +35,7 @@ def main():
     rospy.spin()
 
 ## sending constant velocity (Need to modify for Task 1)
-def constant_vel_loop():
+def cmd_vel_loop():
     velcmd_pub = rospy.Publisher('/cmdvel', WheelCmdVel, queue_size = 1)
     rate = rospy.Rate(100) # 100hz
     
