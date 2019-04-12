@@ -100,7 +100,7 @@ def cmd_vel_loop():
             wcv.desiredWV_R = -0.1
             wcv.desiredWV_L = -0.1
 
-        
+        print wcv
         velcmd_pub.publish(wcv) 
         
         rate.sleep() 
