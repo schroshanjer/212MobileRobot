@@ -70,14 +70,14 @@ def cmd_vel_loop():
         elif cmd=='a':
             # self.turn_direction=-1
             # self.turn_cd=4
-            wcv.desiredWV_R = 0.2
-            wcv.desiredWV_L = 0.
+            wcv.desiredWV_R = 0.1
+            wcv.desiredWV_L = -0.1
             
         elif cmd=='d':
             # self.turn_direction=1
             # self.turn_cd=4
-            wcv.desiredWV_R = 0.
-            wcv.desiredWV_L = 0.2
+            wcv.desiredWV_R = -0.1
+            wcv.desiredWV_L = 0.1
             
         elif cmd=='s':
             #self.run_dir=-1.
