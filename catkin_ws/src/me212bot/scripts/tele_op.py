@@ -25,11 +25,12 @@ def main():
     rospy.sleep(1)
     
     constant_vel = True
-    if constant_vel:
-        thread = threading.Thread(target = constant_vel_loop)
-    else:
-        thread = threading.Thread(target = navi_loop)
-    thread.start()
+    constant_vel_loop()
+    # if constant_vel:
+    #     thread = threading.Thread(target = constant_vel_loop)
+    # else:
+    #     thread = threading.Thread(target = navi_loop)
+    # thread.start()
     
     rospy.spin()
 
@@ -40,8 +41,9 @@ def constant_vel_loop():
     
     while not rospy.is_shutdown() :
         wcv = WheelCmdVel()
-        #cmd=raw_input()
-        cmd='w'
+        cmd=raw_input()
+        
+        #cmd='w'
         print 'test'
         if cmd=='w':
             wcv.desiredWV_R = 0.1
