@@ -71,12 +71,12 @@ def cmd_vel_loop():
             # self.turn_direction=-1
             # self.turn_cd=4
             wcv.desiredWV_R = 0.2
-            wcv.desiredWV_L = 0.1
+            wcv.desiredWV_L = 0.
             
-        elif cmd=='d'
+        elif cmd=='d':
             # self.turn_direction=1
             # self.turn_cd=4
-            wcv.desiredWV_R = 0.1
+            wcv.desiredWV_R = 0.
             wcv.desiredWV_L = 0.2
             
         elif cmd=='s':
