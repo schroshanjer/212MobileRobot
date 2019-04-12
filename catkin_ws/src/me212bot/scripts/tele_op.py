@@ -40,8 +40,24 @@ def constant_vel_loop():
     
     while not rospy.is_shutdown() :
         wcv = WheelCmdVel()
-        wcv.desiredWV_R = 0.1
-        wcv.desiredWV_L = 0.2
+        cmd=raw_input()
+        print 'test'
+        if cmd=='w':
+            wcv.desiredWV_R = 0.1
+            wcv.desiredWV_L = 0.1
+            print 'haha'
+        elif cmd=='a':
+            wcv.desiredWV_R = 0.2
+            wcv.desiredWV_L = 0.1
+        elif cmd=='d':
+            wcv.desiredWV_R = 0.1
+            wcv.desiredWV_L = 0.2
+        elif cmd=='s':
+            wcv.desiredWV_R = -0.1
+            wcv.desiredWV_L = -0.1
+        else:
+            wcv.desiredWV_R = 0.
+            wcv.desiredWV_L = 0.
         
         velcmd_pub.publish(wcv) 
         
