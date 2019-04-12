@@ -27,6 +27,7 @@ def send_vel_loop():
     while not rospy.is_shutdown() :
         wcv = WheelCmdVel()
         cmd=raw_input()
+        print 'test'
         if cmd=='w':
             wcv.desiredWV_R = 0.1
             wcv.desiredWV_L = 0.1
