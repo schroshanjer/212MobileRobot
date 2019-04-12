@@ -10,7 +10,7 @@ from apriltags.msg import AprilTagDetections
 from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad
 
 
-#rospy.init_node('apriltag_navi', anonymous=True)
+rospy.init_node('tele_op', anonymous=True)
 lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
 
