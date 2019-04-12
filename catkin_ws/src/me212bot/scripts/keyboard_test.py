@@ -1,14 +1,14 @@
-import struct
-mou = open( "/dev/input/mice", "rb" );
-def m_event():
-    m = mou.read(3)
-    b = ord( m[0] )
-    bl = b & 0x1
-    bm = ( b & 0x4 ) > 0
-    br = ( b & 0x2 ) > 0
-    x,y = struct.unpack( "bb", m[1:] )
-    print "Left:%d, Middle: %d, Right: %d, x: %d, y: %d\n" % (bl,bm,br, x, y)
+from evdev import InputDevice
+from select import select
 
-while( 1 ):
-    m_event()
-    mou.close();
+def detectInputKey():
+    dev = InputDevice('/dev/input/event4')
+    while True:
+        select([dev], [], [])
+        for event in dev.read():
+            if (event.value == 1 or event.value == 0) and event.code != 0:
+                print "Key: %s Status: %s" % (event.code, "pressed" if event.value else "release")
+
+
+if __name__ == '__main__':
+    detectInputKey()
