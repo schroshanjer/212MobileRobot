@@ -62,6 +62,8 @@ def cmd_vel_loop():
         #print 'test'
         if cmd=='w':
             self.run_dir=1.
+            self.turn_direction=0
+            self.turn_cd=0
             # wcv.desiredWV_R = 0.1
             # wcv.desiredWV_L = 0.1
             #print 'haha'
@@ -70,7 +72,7 @@ def cmd_vel_loop():
             self.turn_cd=4
             
         elif cmd=='d':
-            self.turn_direction=-1
+            self.turn_direction=1
             self.turn_cd=4
             
         elif cmd=='s':
