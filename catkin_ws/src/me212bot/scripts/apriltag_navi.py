@@ -76,8 +76,8 @@ def navi_loop():
         
         if robot_pose3d is None:
             print '1. Tag not in view, Stop'
-            wcv.desiredWV_R = 0  # right, left
-            wcv.desiredWV_L = 0
+            wcv.desiredWV_R = 0.1  # right, left
+            wcv.desiredWV_L = 0.1
             velcmd_pub.publish(wcv)  
             rate.sleep()
             continue
