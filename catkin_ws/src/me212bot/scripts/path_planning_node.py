@@ -27,7 +27,7 @@ br = tf.TransformBroadcaster()
 class PathPlanningNode:
     def __init__(self):
             # print out a message for debugging
-        rospy.loginfo("Starting racecar_safety_node (Python)")
+        rospy.loginfo("Starting path_planning_node (Python)")
 
         #self.safety_lock = False
         self.laser_data=None
