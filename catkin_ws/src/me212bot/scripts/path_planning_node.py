@@ -73,11 +73,12 @@ class PathPlanningNode:
         #msg=RacecarDriveStamped(drive=RacecarDrive())
         #msg_debug=Float64MultiArray()
         wcv = WheelCmdVel()
-        vel_desired=1.0
+        vel_desired=0.1
         if self.laser_data:
-            desiredWV_R,desiredWV_L=find_direction(self.laser_data,0.2)
+            desiredWV_R,desiredWV_L,debug=find_direction(self.laser_data,0.2)
             wcv.desiredWV_R = desiredWV_R
             wcv.desiredWV_L = desiredWV_L
+            self.velcmd_pub.publish(wcv)
             #servo=0.78
             #servo=servo
             #speed=0.0
@@ -88,7 +89,8 @@ class PathPlanningNode:
             wcv.desiredWV_R = 0.0
             wcv.desiredWV_L = 0.0
             self.velcmd_pub.publish(wcv) 
-	print desiredWV_R,desiredWV_L        
+	print desiredWV_R,desiredWV_L
+    print debug  
 	#self.safe_debug_pub.publish(msg_debug)
         #self.safe_drive_pub.publish(msg)
     

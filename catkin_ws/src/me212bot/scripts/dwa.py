@@ -102,7 +102,7 @@ def find_direction(laser_msgs, margin=0.5):
             direction=direction[0]
     debug=np.array([angle_list,distance_list])
     debug=debug.transpose().reshape(-1)
-    return rad_to_servo(direction),debug
+    return *alpha_to_w(direction),debug
 
 
 
