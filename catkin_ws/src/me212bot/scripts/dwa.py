@@ -12,6 +12,9 @@ steering_angle_to_servo_offset=0.5201
 robot_b=0.225
 wheel_r=0.037
 
+robot_uaw=0.2
+robot_aw=-0.12
+
 max_detect_range=75
 data_dir='~/pkl_files'
 
@@ -50,19 +53,27 @@ def get_rot_center(alpha):
     if abs(alpha) < 0.01:
         return None
     
-    fw=0.04
-    bw=-0.28
+    #robot_uaw=0.04
+    #robot_aw=-0.28
+    fw=robot_uaw
+    bw=robot_aw
 
     x=-(bw-fw)/np.tan(alpha)
     y=bw
     return (x,y)
 
+def r_to_alpha(r):
+    fw=robot_uaw
+    bw=robot_aw
+
+    return np.arctan((fw-bw)/r)
+
 def alpha_to_w(alpha,robotVel):
     #alpha is the angle between front wheel and front (clockwise is positive, 0 is stright forward)
     
 
-    fw=0.04
-    bw=-0.28
+    fw=robot_uaw
+    bw=robot_aw
 
     K=np.tan(alpha)/(bw-fw)
     
@@ -95,7 +106,8 @@ def find_direction(laser_msgs, margin=0.5):
     intensity=intensity[valid_indx]
     obstacle=np.transpose([angles,ranges])
 
-    angle_list=np.linspace(servo_to_rad(0.1),servo_to_rad(0.9),25)
+    angle_list=np.linspace(-r_to_alpha(robot_b),r_to_alpha(robot_b),25)
+
     distance_list=[]
     for angle in angle_list:
         
