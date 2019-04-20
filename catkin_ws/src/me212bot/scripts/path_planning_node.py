@@ -92,6 +92,7 @@ class PathPlanningNode:
             wcv.desiredWV_L = 0.0
             self.velcmd_pub.publish(wcv) 
         if self.laser_data:
+            print alpha
             print desiredWV_R,desiredWV_L
             print debug  
         return
