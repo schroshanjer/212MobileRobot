@@ -40,8 +40,10 @@ def speed_in_meter(speed):
 def ranges_in_meter(ranges):
     return ranges
 
-def angles_in_caculating_fram(angles):
-    return -angles
+def angles_in_caculating_frame(angles):
+    angles=angles+np.pi
+    np.where(angles>np.pi,angles-2*np.pi,angles)
+    return angles
 
 def get_rot_center(alpha):
     #alpha is the angle between front wheel and front (clockwise is positive, 0 is stright forward)
@@ -79,9 +81,11 @@ def find_direction(laser_msgs, margin=0.5):
     #alpha=servo_to_rad(servo)
     ranges=ranges_in_meter(np.array(laser_msgs.ranges))
     intensity=np.array(laser_msgs.intensities)
+
     angles=np.linspace(laser_msgs.angle_min,laser_msgs.angle_max,len(ranges))
-    angles=angles_in_caculating_fram(angles)
+    angles=angles_in_caculating_frame(angles)
     valid_indx=np.where(np.abs(angles)<=np.pi/2)
+    
     angles=angles[valid_indx]
     ranges=ranges[valid_indx]
     intensity=intensity[valid_indx]
