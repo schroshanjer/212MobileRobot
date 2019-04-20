@@ -108,7 +108,7 @@ def find_direction(laser_msgs, margin=0.5):
 
     angle_list=np.linspace(-r_to_alpha(robot_b),r_to_alpha(robot_b),25)
     print angle_list
-    
+
     distance_list=[]
     for angle in angle_list:
         
@@ -148,6 +148,8 @@ def get_distance(angle, obstacle, margin=0.5, noise_level=2):
         distance=y-np.sqrt(margin*margin-x*x)
         distance_list=sorted(distance[collide_indx])
         #return np.min(distance[collide_indx])
+        if len(distance_list)<=noise_level:
+            return max_detect_range
         return distance_list[noise_level]
         #distance_t2=distance-speed*timestep
         #collide=np.where(distance_t2<=0,1,0)*crossing
