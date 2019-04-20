@@ -42,8 +42,8 @@ class PathPlanningNode:
         rospy.Subscriber("scan", LaserScan, self.laser_scan_callback)
 
         # publish safe drive commands
-        self.safe_drive_pub = rospy.Publisher("racecar_planning", RacecarDriveStamped, queue_size=10)
-        self.safe_debug_pub = rospy.Publisher("racecar_planning_debug", Float64MultiArray, queue_size=10)
+        #self.safe_drive_pub = rospy.Publisher("racecar_planning", RacecarDriveStamped, queue_size=10)
+        #self.safe_debug_pub = rospy.Publisher("racecar_planning_debug", Float64MultiArray, queue_size=10)
 
         # create a Timer to check for stalled inputs
         rospy.Timer(rospy.Duration(0.1), self.timer_callback)
@@ -59,29 +59,30 @@ class PathPlanningNode:
 
     def timer_callback(self, event):
         # perhaps check for stalled inputs?
-        if self.manual_control:
-            self.safe_drive_pub.publish(self.manual_control_msg)
-            self.manual_control=False
-            self.manual_control_msg=None
-            return
-        else:
-            self.move()
-            return
+        #if self.manual_control:
+        #    self.safe_drive_pub.publish(self.manual_control_msg)
+        #    self.manual_control=False
+        #    self.manual_control_msg=None
+        #    return
+        #else:
+        self.move()
+        return
         pass
     def move(self):
-        msg=RacecarDriveStamped(drive=RacecarDrive())
-        msg_debug=Float64MultiArray()
+        #msg=RacecarDriveStamped(drive=RacecarDrive())
+        #msg_debug=Float64MultiArray()
         if self.laser_data:
             servo,debug=find_direction(self.laser_data,0.2)
             #servo=0.78
-            msg.drive.servo=servo
-            msg.drive.speed=0.0
-            msg_debug.data=debug
+            servo=servo
+            speed=0.0
+            #msg_debug.data=debug
         else:
-            msg.drive.servo=0
-            msg.drive.speed=0
-        self.safe_debug_pub.publish(msg_debug)
-        self.safe_drive_pub.publish(msg)
+            servo=0
+            speed=0
+	print servo,speed        
+	#self.safe_debug_pub.publish(msg_debug)
+        #self.safe_drive_pub.publish(msg)
     
 # def main():
 #     #apriltag_sub = rospy.Subscriber("/apriltags/detections", AprilTagDetections, apriltag_callback, queue_size = 1)
@@ -219,7 +220,7 @@ def navi_loop():
 
 if __name__=='__main__':
     # main()
-    rospy.init_node("path_planning_node")
+    #rospy.init_node("path_planning_node")
 
     node = PathPlanningNode()
 
