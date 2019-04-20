@@ -12,8 +12,8 @@ steering_angle_to_servo_offset=0.5201
 robot_b=0.225
 wheel_r=0.037
 
-robot_uaw=0.2
 robot_aw=-0.12
+robot_uaw=robot_aw+0.32
 
 max_detect_range=75
 data_dir='~/pkl_files'
