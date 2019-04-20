@@ -40,6 +40,7 @@ class PathPlanningNode:
         
         #apriltag_sub = rospy.Subscriber("/apriltags/detections", AprilTagDetections, apriltag_callback, queue_size = 1)
         rospy.Subscriber("scan", LaserScan, self.laser_scan_callback)
+        self.velcmd_pub = rospy.Publisher("/cmdvel", WheelCmdVel, queue_size = 1)
 
         # publish safe drive commands
         #self.safe_drive_pub = rospy.Publisher("racecar_planning", RacecarDriveStamped, queue_size=10)
@@ -71,16 +72,23 @@ class PathPlanningNode:
     def move(self):
         #msg=RacecarDriveStamped(drive=RacecarDrive())
         #msg_debug=Float64MultiArray()
+        wcv = WheelCmdVel()
+        vel_desired=1.0
         if self.laser_data:
-            servo,debug=find_direction(self.laser_data,0.2)
+            desiredWV_R,desiredWV_L=find_direction(self.laser_data,0.2)
+            wcv.desiredWV_R = desiredWV_R
+            wcv.desiredWV_L = desiredWV_L
             #servo=0.78
-            servo=servo
-            speed=0.0
+            #servo=servo
+            #speed=0.0
             #msg_debug.data=debug
         else:
-            servo=0
-            speed=0
-	print servo,speed        
+            # servo=0
+            # speed=0
+            wcv.desiredWV_R = 0.0
+            wcv.desiredWV_L = 0.0
+            self.velcmd_pub.publish(wcv) 
+	print desiredWV_R,desiredWV_L        
 	#self.safe_debug_pub.publish(msg_debug)
         #self.safe_drive_pub.publish(msg)
     

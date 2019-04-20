@@ -52,6 +52,24 @@ def get_rot_center(alpha):
     y=bw
     return (x,y)
 
+def alpha_to_w(alpha,robotVel):
+    #alpha is the angle between front wheel and front (clockwise is positive, 0 is stright forward)
+    
+
+    fw=0.04
+    bw=-0.28
+
+    K=np.tan(alpha)/(bw-fw)
+    
+    # hh=2*v/wheel_r
+    # cc=k*robot_b*hh
+    # wr=(hh+cc)/2
+    # wl=(hh-cc)/2
+    desiredWV_L = robotVel - K *robot_b * robotVel;
+    desiredWV_R = 2*robotVel - desiredWV_L ;
+
+    return desiredWV_R,desiredWV_L
+
 
 def find_direction(laser_msgs, margin=0.5):
     #speed=speed_in_meter(speed)
