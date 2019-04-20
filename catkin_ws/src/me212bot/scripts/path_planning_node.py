@@ -90,8 +90,8 @@ class PathPlanningNode:
             wcv.desiredWV_R = 0.0
             wcv.desiredWV_L = 0.0
             self.velcmd_pub.publish(wcv) 
-	print desiredWV_R,desiredWV_L
-    print debug  
+        print desiredWV_R,desiredWV_L
+        print debug  
 	#self.safe_debug_pub.publish(msg_debug)
         #self.safe_drive_pub.publish(msg)
     
