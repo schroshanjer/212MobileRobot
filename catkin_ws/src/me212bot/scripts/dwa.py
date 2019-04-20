@@ -107,7 +107,8 @@ def find_direction(laser_msgs, margin=0.5):
     obstacle=np.transpose([angles,ranges])
 
     angle_list=np.linspace(-r_to_alpha(robot_b),r_to_alpha(robot_b),25)
-
+    print angle_list
+    
     distance_list=[]
     for angle in angle_list:
         
