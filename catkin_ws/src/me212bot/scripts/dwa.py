@@ -9,6 +9,9 @@ import cPickle as pickle
 steering_angle_to_servo_gain=0.8942
 steering_angle_to_servo_offset=0.5201
 
+robot_b=0.225
+wheel_r=0.037
+
 max_detect_range=75
 data_dir='~/pkl_files'
 
