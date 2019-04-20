@@ -74,6 +74,7 @@ class PathPlanningNode:
         #msg_debug=Float64MultiArray()
         wcv = WheelCmdVel()
         vel_desired=0.1
+        debug=None
         if self.laser_data:
             desiredWV_R,desiredWV_L,debug=find_direction(self.laser_data,0.2)
             wcv.desiredWV_R = desiredWV_R
