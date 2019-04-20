@@ -76,8 +76,11 @@ class PathPlanningNode:
         self.vel_desired=0.1
         debug=None
         if self.laser_data:
-            alpha,debug=find_direction(self.laser_data,0.2)
-            desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
+            alpha,debug=find_direction(self.laser_data,margin=0.2,stop_margin=0.25)
+            if alpha is None:
+                desiredWV_R,desiredWV_L=(0,0)
+            else:
+                desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
             wcv.desiredWV_R = desiredWV_R
             wcv.desiredWV_L = desiredWV_L
             self.velcmd_pub.publish(wcv)
