@@ -46,7 +46,7 @@ def ranges_in_meter(ranges):
 def angles_in_caculating_frame(angles):
     angles=angles+np.pi
     angles=np.where(angles>np.pi,angles-2*np.pi,angles)
-    return -angles
+    return angles
 
 def get_rot_center(alpha):
     #alpha is the angle between front wheel and front (clockwise is positive, 0 is stright forward)
