@@ -81,7 +81,7 @@ class PathPlanningNode:
             alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.23)
             if distance<=self.stop_margin and distance_rot<=self.stop_margin:
                 desiredWV_R,desiredWV_L=(0,0)
-            elif distance>=distance_rot or abs(alpha_rot)<=5./180.*np.pi:
+            elif distance>=distance_rot/2. or abs(alpha_rot)<=5./180.*np.pi:
                 desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
             else:
                 if alpha_rot<0:
