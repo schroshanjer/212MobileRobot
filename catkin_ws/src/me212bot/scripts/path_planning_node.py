@@ -76,7 +76,7 @@ class PathPlanningNode:
         self.vel_desired=0.1
         debug=None
         if self.laser_data:
-            alpha,debug=find_direction(self.laser_data,margin=0.23,stop_margin=0.23)
+            alpha,debug=find_direction(self.laser_data,margin=0.23,stop_margin=0.25)
             if alpha is None:
                 desiredWV_R,desiredWV_L=(0,0)
             else:

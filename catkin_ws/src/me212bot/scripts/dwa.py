@@ -115,7 +115,7 @@ def find_direction(laser_msgs, margin=0.5,stop_margin=1.0):
         distance= get_distance(angle,obstacle,margin)
         distance_list.append(distance)
 
-    if np.max(distance_list)<=stop_margin:
+    if np.max(distance_list)<=stop_margin-margin:
         debug=np.array([angle_list,distance_list])
         debug=debug.transpose()
         return None,debug
