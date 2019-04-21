@@ -166,6 +166,7 @@ def find_direction_rot(laser_msgs, margin=0.5):
         distance= get_distance_rot(angle,obstacle,margin)
         distance_list.append(distance)
     
+    print distance_list
     direction=angle_list[np.where(distance_list==np.max(distance_list))]
     print direction,type(direction)
     if type(direction) is not type(angle_list[0]):
