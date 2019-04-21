@@ -95,8 +95,9 @@ def find_direction(laser_msgs, margin=0.5,stop_margin=1.0):
 
     angles=np.linspace(laser_msgs.angle_min,laser_msgs.angle_max,len(ranges))
     angles=angles_in_caculating_frame(angles)
-    print np.transpose([angles,ranges,intensity])
+
     valid_indx=np.where(np.abs(angles)<=np.pi/2)
+    print np.transpose([angles,ranges,intensity])
     
     angles=angles[valid_indx]
     ranges=ranges[valid_indx]
