@@ -45,7 +45,7 @@ def ranges_in_meter(ranges):
 
 def angles_in_caculating_frame(angles):
     angles=angles+np.pi
-    np.where(angles>np.pi,angles-2*np.pi,angles)
+    angles=np.where(angles>np.pi,angles-2*np.pi,angles)
     return -angles
 
 def get_rot_center(alpha):
