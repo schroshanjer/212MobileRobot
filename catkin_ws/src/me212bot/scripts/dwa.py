@@ -192,7 +192,7 @@ def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
     y=d*np.cos(beta)
     
 
-    dd=np.abs(-x*np.cos(alpha)+y*np.sin(alpha))
+    dd=np.abs(-x*np.cos(angle)+y*np.sin(angle))
     crossing=np.where(dd>margin,0,1)
     collide_indx=np.where(crossing==1)
 
