@@ -198,13 +198,17 @@ def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
     crossing=np.where(dd>margin,0,1)
     collide_indx=np.where(crossing==1)
 
-    if len(collide_indx[0])<=noise_level:
+    if len(collide_indx[0])==0:
         return max_detect_range
     dd=np.where(dd<=margin,x,margin)
     #distance=y-np.sqrt(margin*margin-x*x)
+    if x**2+y**2<dd**2:
+        print x,y,angle
     distance=np.sqrt(x**2+y**2-dd**2)-np.sqrt(margin**2-dd**2)
     distance_list=sorted(distance[collide_indx])
     #return np.min(distance[collide_indx])
+    if len(distance_list)<=noise_level:
+        return max_detect_range
 
     return distance_list[noise_level]
 
