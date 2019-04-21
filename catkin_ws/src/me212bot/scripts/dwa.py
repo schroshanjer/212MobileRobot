@@ -202,8 +202,8 @@ def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
         return max_detect_range
     dd=np.where(dd<=margin,x,margin)
     #distance=y-np.sqrt(margin*margin-x*x)
-    if x**2+y**2<dd**2:
-        print x,y,angle
+    if len(np.where(x**2+y**2<dd**2)[0])==0:
+        print x[np.where(x**2+y**2<dd**2)],y[np.where(x**2+y**2<dd**2)],angle
     distance=np.sqrt(x**2+y**2-dd**2)-np.sqrt(margin**2-dd**2)
     distance_list=sorted(distance[collide_indx])
     #return np.min(distance[collide_indx])
