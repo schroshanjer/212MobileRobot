@@ -157,7 +157,7 @@ def find_direction_rot(laser_msgs, margin=0.5):
     obstacle=np.transpose([angles,ranges])
 
 
-    angle_list=np.linspace(-160/180.*np.pi,160/180.*np.pi,15)
+    angle_list=np.linspace(-80/180.*np.pi,80/180.*np.pi,15)
     #print angle_list
 
     distance_list=[]
@@ -191,7 +191,7 @@ def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
     # if not center:
         
     x=d*np.sin(beta)
-    y=d*np.cos(beta)
+    y=d*np.cos(beta)-robot_aw
     
 
     dd=np.abs(-x*np.cos(angle)+y*np.sin(angle))

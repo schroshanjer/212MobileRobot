@@ -35,6 +35,8 @@ class PathPlanningNode:
         #self.manual_control_msg=None
 
         self.count=0
+	self.rotation=False
+	self.rot_rad_left=0
 
         # listen to input drive commands and laser scans
         
@@ -69,27 +71,45 @@ class PathPlanningNode:
         self.move()
         return
         pass
+    def rot(self):
+        dt=0.1
+        wcv = WheelCmdVel()
+        if self.rot_rad_left<0:
+            desiredWV_R=0.1
+            desiredWV_L=-0.1
+        else:
+            desiredWV_R=-0.1
+            desiredWV_L=0.1
+	self.rot_rad_left-=np.sign(self.rot_rad_left)*0.1/robot_b*0.1
+	if abs(self.rot_rad_left)<0.1/robot_b*dt:
+            self.rotation=False
+            self.rot_rad_left=0
+	wcv.desiredWV_R = desiredWV_R
+	wcv.desiredWV_L = desiredWV_L
+	self.velcmd_pub.publish(wcv)
+
     def move(self):
         #msg=RacecarDriveStamped(drive=RacecarDrive())
         #msg_debug=Float64MultiArray()
+        if self.rotation:
+            self.rot()
+            return
         wcv = WheelCmdVel()
         self.vel_desired=0.1
         debug=None
         self.stop_margin=0.05
         if self.laser_data:
-            alpha,distance,debug=find_direction(self.laser_data,margin=0.23)
-            alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.23)
+            alpha,distance,debug=find_direction(self.laser_data,margin=0.3)
+            alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.4)
             if distance<=self.stop_margin and distance_rot<=self.stop_margin:
                 desiredWV_R,desiredWV_L=(0,0)
-            elif distance>=distance_rot/1.5 or abs(alpha_rot)<=5./180.*np.pi:
+            elif distance>=distance_rot/5. or abs(alpha_rot)<=5./180.*np.pi:
                 desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
             else:
-                if alpha_rot<0:
-                    desiredWV_R=0.1
-                    desiredWV_L=-0.1
-                else:
-                    desiredWV_R=-0.1
-                    desiredWV_L=0.1
+                self.rotation=True
+                self.rot_rad_left=alpha_rot
+                self.rot()
+                return
             wcv.desiredWV_R = desiredWV_R
             wcv.desiredWV_L = desiredWV_L
             self.velcmd_pub.publish(wcv)
