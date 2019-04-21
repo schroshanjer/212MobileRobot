@@ -157,7 +157,7 @@ def find_direction_rot(laser_msgs, margin=0.5):
     obstacle=np.transpose([angles,ranges])
 
 
-    angle_list=np.linspace(-np.pi/2,np.pi/2,15)
+    angle_list=np.linspace(-np.pi/3,np.pi/3,15)
     #print angle_list
 
     distance_list=[]
@@ -166,9 +166,9 @@ def find_direction_rot(laser_msgs, margin=0.5):
         distance= get_distance_rot(angle,obstacle,margin)
         distance_list.append(distance)
     
-    print distance_list
+    #print distance_list
     direction=angle_list[np.where(distance_list==np.max(distance_list))]
-    print direction,type(direction)
+    #print direction,type(direction)
     if type(direction) is not type(angle_list[0]):
         direction=direction[np.where(np.abs(direction)==np.min(np.abs(direction)))]
         if type(direction) is not type(angle_list[0]):
@@ -200,10 +200,9 @@ def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
 
     if len(collide_indx[0])==0:
         return max_detect_range
-    dd=np.where(dd<=margin,x,margin)
+    dd=np.where(dd<=margin,dd,margin)
     #distance=y-np.sqrt(margin*margin-x*x)
-    if len(np.where(x**2+y**2<dd**2)[0])==0:
-        print x[np.where(x**2+y**2<dd**2)],y[np.where(x**2+y**2<dd**2)],angle
+
     distance=np.sqrt(x**2+y**2-dd**2)-np.sqrt(margin**2-dd**2)
     distance_list=sorted(distance[collide_indx])
     #return np.min(distance[collide_indx])
