@@ -157,7 +157,7 @@ def find_direction_rot(laser_msgs, margin=0.5):
     obstacle=np.transpose([angles,ranges])
 
 
-    angle_list=np.linspace(-np.pi/2,np.pi/2,15)
+    angle_list=np.linspace(-160/180.*np.pi,160/180.*np.pi,15)
     #print angle_list
 
     distance_list=[]
