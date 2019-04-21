@@ -87,7 +87,7 @@ def alpha_to_w(alpha,robotVel):
     return desiredWV_R,desiredWV_L
 
 
-def find_direction(laser_msgs, margin=0.5,stop_margin=1.0):
+def find_direction(laser_msgs, margin=0.5):
     #speed=speed_in_meter(speed)
     #alpha=servo_to_rad(servo)
     ranges=ranges_in_meter(np.array(laser_msgs.ranges))
@@ -97,7 +97,7 @@ def find_direction(laser_msgs, margin=0.5,stop_margin=1.0):
     angles=angles_in_caculating_frame(angles)
 
     valid_indx=np.where(np.abs(angles)<=np.pi/2)
-    print np.transpose([angles[valid_indx],ranges[valid_indx],intensity[valid_indx]])
+    #print np.transpose([angles[valid_indx],ranges[valid_indx],intensity[valid_indx]])
 
     angles=angles[valid_indx]
     ranges=ranges[valid_indx]
@@ -118,22 +118,91 @@ def find_direction(laser_msgs, margin=0.5,stop_margin=1.0):
         distance= get_distance(angle,obstacle,margin)
         distance_list.append(distance)
 
-    if np.max(distance_list)<=stop_margin-margin:
-        debug=np.array([angle_list,distance_list])
-        debug=debug.transpose()
-        return None,debug
+    # if np.max(distance_list)<=stop_margin-margin:
+    #     debug=np.array([angle_list,distance_list])
+    #     debug=debug.transpose()
+    #     return None,debug
     
     direction=angle_list[np.where(distance_list==np.max(distance_list))]
     if type(direction) is not type(angle_list[0]):
         direction=direction[np.where(np.abs(direction)==np.min(np.abs(direction)))]
         if type(direction) is not type(angle_list[0]):
             direction=direction[0]
+    distance=distance_list[np.where(angle_list==direction)]
     debug=np.array([angle_list,distance_list])
     debug=debug.transpose()#.reshape(-1)
     
-    return direction,debug
+    return direction,distance,debug
+
+def find_direction_rot(laser_msgs, margin=0.5):
+    #speed=speed_in_meter(speed)
+    #alpha=servo_to_rad(servo)
+    ranges=ranges_in_meter(np.array(laser_msgs.ranges))
+    intensity=np.array(laser_msgs.intensities)
+
+    angles=np.linspace(laser_msgs.angle_min,laser_msgs.angle_max,len(ranges))
+    angles=angles_in_caculating_frame(angles)
+
+    valid_indx=np.where(np.abs(angles)<=np.pi/2)
+    #print np.transpose([angles[valid_indx],ranges[valid_indx],intensity[valid_indx]])
+
+    angles=angles[valid_indx]
+    ranges=ranges[valid_indx]
+    intensity=intensity[valid_indx]
+    valid_indx=np.where(intensity>0)
+    angles=angles[valid_indx]
+    ranges=ranges[valid_indx]
+    intensity=intensity[valid_indx]
+    obstacle=np.transpose([angles,ranges])
 
 
+    angle_list=np.linspace(-np.pi/2,np.pi/2,15)
+    #print angle_list
+
+    distance_list=[]
+    for angle in angle_list:
+        
+        distance= get_distance_rot(angle,obstacle,margin)
+        distance_list.append(distance)
+    
+    direction=angle_list[np.where(distance_list==np.max(distance_list))]
+    if type(direction) is not type(angle_list[0]):
+        direction=direction[np.where(np.abs(direction)==np.min(np.abs(direction)))]
+        if type(direction) is not type(angle_list[0]):
+            direction=direction[0]
+    distance=distance_list[np.where(angle_list==direction)]
+    debug=np.array([angle_list,distance_list])
+    debug=debug.transpose()#.reshape(-1)
+    
+    return direction,distance,debug
+
+def get_distance_rot(angle, obstacle, margin=0.5, noise_level=2):
+    obstacle=np.array(obstacle)
+    beta=obstacle[:,0]
+    d=obstacle[:,1]
+    
+    
+
+    # center=get_rot_center(angle)
+    # if not center:
+        
+    x=d*np.sin(beta)
+    y=d*np.cos(beta)
+    
+
+    dd=np.abs(-x*np.cos(alpha)+y*np.sin(alpha))
+    crossing=np.where(dd>margin,0,1)
+    collide_indx=np.where(crossing==1)
+
+    if len(collide_indx[0])<=noise_level:
+        return max_detect_range
+    dd=np.where(dd<=margin,x,margin)
+    #distance=y-np.sqrt(margin*margin-x*x)
+    distance=np.sqrt(x**2+y**2-dd**2)-np.sqrt(margin**2-dd**2)
+    distance_list=sorted(distance[collide_indx])
+    #return np.min(distance[collide_indx])
+
+    return distance_list[noise_level]
 
 
 def get_distance(angle, obstacle, margin=0.5, noise_level=2):

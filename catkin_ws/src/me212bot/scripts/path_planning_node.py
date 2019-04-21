@@ -75,12 +75,21 @@ class PathPlanningNode:
         wcv = WheelCmdVel()
         self.vel_desired=0.1
         debug=None
+        self.stop_margin=0.05
         if self.laser_data:
-            alpha,debug=find_direction(self.laser_data,margin=0.23,stop_margin=0.25)
-            if alpha is None:
+            alpha,distance,debug=find_direction(self.laser_data,margin=0.23)
+            alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.23)
+            if distance<=self.stop_margin and distance_rot<=self.stop_margin:
                 desiredWV_R,desiredWV_L=(0,0)
-            else:
+            elif distance>=distance_rot or abs(alpha_rot)<=5./180.*np.pi:
                 desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
+            else:
+                if alpha_rot<0:
+                    desiredWV_R=0.1
+                    desiredWV_L=-0.1
+                else:
+                    desiredWV_R=-0.1
+                    desiredWV_L=0.1
             wcv.desiredWV_R = desiredWV_R
             wcv.desiredWV_L = desiredWV_L
             self.velcmd_pub.publish(wcv)
