@@ -11,7 +11,7 @@ from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2posel
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped, Header
 
 
-rospy.init_node('apriltag_navi', anonymous=True)
+rospy.init_node('apriltag_detect', anonymous=True)
 lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
 
@@ -45,3 +45,5 @@ def apriltag_callback(data):
         #poselist_base_map = transformPose(lr, poselist_base_tag, 'apriltag', 'map')
         #pubFrame(br, pose = poselist_base_map, frame_id = '/robot_base', parent_frame_id = '/map')
 
+if __name__=='__main__':
+    main()
