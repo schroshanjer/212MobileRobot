@@ -7,13 +7,14 @@ import rospy
 import threading
 import serial
 import tf.transformations as tfm
-from geometry_msgs.msg import Pose, Quaternion
+from geometry_msgs.msg import Pose, Quaternion, PoseStamped, Header
 
 import helper
 from me212bot.msg import WheelCmdVel
 
 serialComm = serial.Serial('/dev/ttyACM0', 115200, timeout = 5)
 
+odom_pub = rospy.Publisher("/odom_pose", WheelCmdVel, queue_size = 1)
 ## main function (Need to modify)
 def main():
     rospy.init_node('me212bot', anonymous=True)
@@ -41,7 +42,9 @@ def read_odometry_loop():
     while not rospy.is_shutdown():
         # get a line of string that represent current odometry from serial
         serialData = serialComm.readline()
-        
+        pose_stamp=PoseStamped()
+        pose_stamp.header.stamp = rospy.Time.now()
+        pose_stamp.header.frame_id = "map"
         # split the string e.g. "0.1,0.2,0.1" with cammas
         splitData = serialData.split(',')
         
@@ -63,6 +66,12 @@ def read_odometry_loop():
             
             qtuple = tfm.quaternion_from_euler(0, 0, theta)
             odom.orientation = Quaternion(qtuple[0], qtuple[1], qtuple[2], qtuple[3])
+
+            pose_stamp.pose=odom
+
+            odom_pub.publish(pose_stamp)
+
+            
         except:
             # print out msg if there is an error parsing a serial msg
             print 'Cannot parse', splitData
