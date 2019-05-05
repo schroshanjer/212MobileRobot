@@ -44,7 +44,7 @@ def read_odometry_loop():
         serialData = serialComm.readline()
         pose_stamp=PoseStamped()
         pose_stamp.header.stamp = rospy.Time.now()
-        pose_stamp.header.frame_id = "map"
+        pose_stamp.header.frame_id = "/map"
         # split the string e.g. "0.1,0.2,0.1" with cammas
         splitData = serialData.split(',')
         
