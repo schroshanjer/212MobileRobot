@@ -43,10 +43,11 @@ def cmdvel_callback(msg):
 
 # read_odometry_loop() is for reading odometry from Arduino and publish to rostopic. (No need to modify)
 def read_odometry_loop():
-    prevtime = rospy.Time.now()
+    
     while not rospy.is_shutdown():
         # get a line of string that represent current odometry from serial
         serialData = serialComm.readline()
+        prevtime = rospy.Time.now()
         #print serialData
         pose_stamp=PoseStamped()
         pose_stamp.header.stamp = prevtime
