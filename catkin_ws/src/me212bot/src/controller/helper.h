@@ -108,8 +108,8 @@ class SerialComm {
     void send(const RobotPose& robotPose) {
         unsigned long current_time = micros();
         if (current_time - prevSerialTime >= SERIAL_PERIOD_MICROS) {
-            Serial.print(robotPose.dTL,10);   Serial.print(","); 
-            Serial.print(robotPose.dTR,10);   Serial.print(","); 
+            Serial.print(robotPose.dTL,6);   Serial.print(","); 
+            Serial.print(robotPose.dTR,6);   Serial.print(","); 
             Serial.print(robotPose.X, 6);   Serial.print(",");  //X 
             Serial.print(robotPose.Y, 6);   Serial.print(",");  //Y 
             Serial.println(robotPose.Th);                       //Th
