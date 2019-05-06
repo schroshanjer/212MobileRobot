@@ -13,11 +13,13 @@ from std_msgs.msg import Header
 import traceback
 
 import helper
-from me212bot.msg import WheelCmdVel
+from me212bot.msg import WheelCmdVel,WheelEncoder
 
 serialComm = serial.Serial('/dev/ttyACM0', 115200, timeout = 5)
 
 odom_pub = rospy.Publisher("/odom_pose", PoseStamped, queue_size = 1)
+
+encoder_pub = rospy.Publisher("/odom_encoder", PoseStamped, queue_size = 1)
 ## main function (Need to modify)
 def main():
     rospy.init_node('me212bot', anonymous=True)
@@ -51,6 +53,9 @@ def read_odometry_loop():
         pose_stamp.header.frame_id = "/map"
         # split the string e.g. "0.1,0.2,0.1" with cammas
         splitData = serialData.split(',')
+
+        wheelencode=WheelEncoder()
+        pose_stamp.header.stamp = rospy.Time.now()
         
         # parse the 3 split strings into 3 floats
         try:
@@ -64,7 +69,10 @@ def read_odometry_loop():
             distance=float(splitData[5])
             
             hz    = 1.0 / (rospy.Time.now().to_sec() - prevtime.to_sec())
-            prevtime = rospy.Time.now()
+            #prevtime = rospy.Time.now()
+
+            wheelencode.Theta_R=dTR
+            wheelencode.Theta_L=dTL
             
             print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
@@ -80,6 +88,8 @@ def read_odometry_loop():
             pose_stamp.pose=odom
 
             odom_pub.publish(pose_stamp)
+
+            encoder_pub.publish(wheelencode)
 
             
         except Exception:
