@@ -1,3 +1,3 @@
-float32 Timestamp
+float32 Time_Stamp
 float32 Theta_R
 float32 Theta_L
