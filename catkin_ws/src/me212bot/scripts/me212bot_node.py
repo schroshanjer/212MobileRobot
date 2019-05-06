@@ -15,7 +15,7 @@ from me212bot.msg import WheelCmdVel
 
 serialComm = serial.Serial('/dev/ttyACM0', 115200, timeout = 5)
 
-odom_pub = rospy.Publisher("/odom_pose", WheelCmdVel, queue_size = 1)
+odom_pub = rospy.Publisher("/odom_pose", PoseStamped, queue_size = 1)
 ## main function (Need to modify)
 def main():
     rospy.init_node('me212bot', anonymous=True)
