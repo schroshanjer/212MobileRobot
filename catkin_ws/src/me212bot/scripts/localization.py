@@ -31,7 +31,7 @@ class State(object):
         self.tag_num=2
         #self.tag_pose=np.array([0,0,-np.pi])
         self.tag_data=[None]*self.tag_num
-    def clear_measure():
+    def clear_measure(self):
         self.encoder_data=[]
         self.tag_data=[None]*self.tag_num
 
