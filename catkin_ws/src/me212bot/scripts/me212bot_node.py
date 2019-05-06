@@ -76,7 +76,7 @@ def read_odometry_loop():
 
             wheelencode.Theta_R=dTR
             wheelencode.Theta_L=dTL
-            wheelencode.Time_Stamp=dTL
+            wheelencode.Time_Stamp=prevtime.to_sec()
             
             #print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
