@@ -111,8 +111,9 @@ class SerialComm {
             Serial.print(robotPose.X, 6);   Serial.print(",");  //X 
             Serial.print(robotPose.Y, 6);   Serial.print(",");  //Y 
             Serial.print(robotPose.Th,10);   Serial.print(",");                 //Th
-            Serial.print(robotPose.dTL,10);   Serial.print(","); 
-            Serial.print(robotPose.dTR,10);
+            Serial.print(robotPose.dTL,16);   Serial.print(","); 
+            Serial.print(robotPose.dTR,16);   Serial.print(","); 
+            Serial.print(robotPose.pathDistance, 6);  //Serial.print(","); 
             Serial.println("");
             prevSerialTime = current_time;
         }
