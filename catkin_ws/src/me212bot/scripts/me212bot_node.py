@@ -10,7 +10,7 @@ import tf.transformations as tfm
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 from std_msgs.msg import Header
 
-import traceback
+import traceback,time
 
 import helper
 from me212bot.msg import WheelCmdVel,WheelEncoder
@@ -56,7 +56,7 @@ def read_odometry_loop():
         splitData = serialData.split(',')
 
         wheelencode=WheelEncoder()
-        wheelencode.Timestamp=prevtime.to_sec()
+        wheelencode.Timestamp=time.time()
         #pose_stamp.header.stamp = rospy.Time.now()
         
         # parse the 3 split strings into 3 floats
