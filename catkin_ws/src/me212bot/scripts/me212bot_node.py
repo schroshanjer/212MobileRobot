@@ -43,6 +43,7 @@ def read_odometry_loop():
     while not rospy.is_shutdown():
         # get a line of string that represent current odometry from serial
         serialData = serialComm.readline()
+        print serialData
         pose_stamp=PoseStamped()
         pose_stamp.header.stamp = rospy.Time.now()
         pose_stamp.header.frame_id = "/map"
@@ -58,7 +59,7 @@ def read_odometry_loop():
             hz    = 1.0 / (rospy.Time.now().to_sec() - prevtime.to_sec())
             prevtime = rospy.Time.now()
             
-            print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
+            #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
             
             # publish odometry as Pose msg
             odom = Pose()

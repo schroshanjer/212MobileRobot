@@ -7,7 +7,7 @@
 #include "Arduino.h"
 #include "helper.h"
 
-EncoderMeasurement  encoder(26);      // encoder handler class, set the motor type 53 or 26 here
+EncoderMeasurement  encoder(53);      // encoder handler class, set the motor type 53 or 26 here
 RobotPose           robotPose;        // robot position and orientation calculation class
 PIController        wheelVelCtrl;     // velocity PI controller class
 SerialComm          serialComm;       // serial communication class
