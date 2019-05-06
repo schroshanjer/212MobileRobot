@@ -57,7 +57,7 @@ def read_odometry_loop():
 
         wheelencode=WheelEncoder()
         wheelencode.Timestamp=prevtime.to_sec()
-        print prevtime.to_sec()
+        print wheelencode.Timestamp
         #pose_stamp.header.stamp = rospy.Time.now()
         
         # parse the 3 split strings into 3 floats
