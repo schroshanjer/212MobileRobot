@@ -77,9 +77,10 @@ def read_odometry_loop():
 
             
         except Exception:
-            print traceback.print_exc()
+            pass
+            #print traceback.print_exc()
             # print out msg if there is an error parsing a serial msg
-            print 'Cannot parse', splitData
+            #print 'Cannot parse', splitData
             
 
 if __name__=='__main__':
