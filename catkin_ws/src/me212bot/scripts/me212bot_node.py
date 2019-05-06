@@ -92,7 +92,7 @@ def read_odometry_loop():
 
             odom_pub.publish(pose_stamp)
 
-            print wheelencode.Timestamp
+            print type(wheelencode.Timestamp)
             encoder_pub.publish(wheelencode)
 
             
