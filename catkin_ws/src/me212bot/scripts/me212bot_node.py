@@ -19,7 +19,7 @@ serialComm = serial.Serial('/dev/ttyACM0', 115200, timeout = 5)
 
 odom_pub = rospy.Publisher("/odom_pose", PoseStamped, queue_size = 1)
 
-encoder_pub = rospy.Publisher("/odom_encoder", PoseStamped, queue_size = 1)
+encoder_pub = rospy.Publisher("/odom_encoder", WheelEncoder, queue_size = 1)
 ## main function (Need to modify)
 def main():
     rospy.init_node('me212bot', anonymous=True)
