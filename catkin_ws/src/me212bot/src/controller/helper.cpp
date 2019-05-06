@@ -70,8 +70,6 @@ void RobotPose::update(float dThetaL, float dThetaR) {
     
     X += dX;
     Y += dY;
-    //dTL=dThetaL;
-    //dTR=dThetaR;
     
     pathDistance += sqrt(dX * dX + dY * dY);
 }
@@ -114,5 +112,3 @@ void PIController::doPIControl(String side, float desV, float currV) {
         Serial.println("ERROR: INVALID MOTOR CHOICE GIVEN TO PI CONTROLLER");
     }
 }
-
-

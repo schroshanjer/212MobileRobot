@@ -61,11 +61,10 @@ class RobotPose {
     float X, Y;          // robot X,Y position in meters
     float Th;            // robot orientation in rad
     float pathDistance;  // trajectory path distance in meters
-    //float dTL,dTR;
     
     RobotPose():
       Th(0),
-      X(0), Y(0), pathDistance(0){}//,dTL(0),dTR(0) {}
+      X(0), Y(0), pathDistance(0) {}
       
     void update(float dThetaL, float dThetaR); // update the odometry from delta in R and L wheel positions
     
@@ -108,8 +107,6 @@ class SerialComm {
     void send(const RobotPose& robotPose) {
         unsigned long current_time = micros();
         if (current_time - prevSerialTime >= SERIAL_PERIOD_MICROS) {
-            // Serial.print(robotPose.dTL,6);   Serial.print(","); 
-            // Serial.print(robotPose.dTR,6);   Serial.print(","); 
             Serial.print(robotPose.X, 6);   Serial.print(",");  //X 
             Serial.print(robotPose.Y, 6);   Serial.print(",");  //Y 
             Serial.println(robotPose.Th);                       //Th
@@ -122,5 +119,3 @@ class SerialComm {
 
 
 #endif
-
-
