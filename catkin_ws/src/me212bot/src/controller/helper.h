@@ -110,9 +110,10 @@ class SerialComm {
         if (current_time - prevSerialTime >= SERIAL_PERIOD_MICROS) {
             Serial.print(robotPose.X, 6);   Serial.print(",");  //X 
             Serial.print(robotPose.Y, 6);   Serial.print(",");  //Y 
-            Serial.println(robotPose.Th);   Serial.print(",");                 //Th
-            Serial.println(robotPose.dTL);   Serial.print(","); 
-            Serial.println(robotPose.dTR);
+            Serial.print(robotPose.Th,10);   Serial.print(",");                 //Th
+            Serial.print(robotPose.dTL,10);   Serial.print(","); 
+            Serial.print(robotPose.dTR,10);
+            Serial.println(";");
             prevSerialTime = current_time;
         }
     }
