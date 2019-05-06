@@ -37,14 +37,15 @@ def apriltag_callback(data):
         #if detection.id == 1:   # tag id is the correct one
         poselist_tag_cam = pose2poselist(detection.pose)
         poselist_tag_base = transformPose(lr, poselist_tag_cam, 'camera', 'robot_base')
-        print poselist_tag_base
+        #print poselist_tag_base
+        #print type(detection.id)
         tag_pose=poselist2pose(poselist_tag_base)
         if detection.id in tag_id_list:
             pose_stamp=PoseStamped()
             pose_stamp.header.stamp = tt
             pose_stamp.header.frame_id = "/base"
             pose_stamp.pose=tag_pose
-            tag_pubs[detection.id].publish()
+            tag_pubs[detection.id].publish(pose_stamp)
         #poselist_base_tag = invPoselist(poselist_tag_base)
         #poselist_base_map = transformPose(lr, poselist_base_tag, 'apriltag', 'map')
         #pubFrame(br, pose = poselist_base_map, frame_id = '/robot_base', parent_frame_id = '/map')
