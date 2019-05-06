@@ -9,7 +9,7 @@ import tf.transformations as tfm
 
 from me212bot.msg import WheelCmdVel
 from apriltags.msg import AprilTagDetections
-from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad
+from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad, poselist2pose
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 from std_msgs.msg import Header
 
