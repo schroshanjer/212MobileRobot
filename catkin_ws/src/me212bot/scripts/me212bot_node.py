@@ -45,7 +45,7 @@ def read_odometry_loop():
     while not rospy.is_shutdown():
         # get a line of string that represent current odometry from serial
         serialData = serialComm.readline()
-        print serialData
+        #print serialData
         pose_stamp=PoseStamped()
         pose_stamp.header.stamp = rospy.Time.now()
         pose_stamp.header.frame_id = "/map"
@@ -57,10 +57,14 @@ def read_odometry_loop():
             x     = float(splitData[0])
             y     = float(splitData[1])
             theta = float(splitData[2])
+
+            dTL=float(splitData[3])
+            dTR=float(splitData[4])
             
             hz    = 1.0 / (rospy.Time.now().to_sec() - prevtime.to_sec())
             prevtime = rospy.Time.now()
             
+            print 'dtl=', dTL, 'dtr=', dTR
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
             
             # publish odometry as Pose msg
@@ -77,10 +81,10 @@ def read_odometry_loop():
 
             
         except Exception:
-            pass
+            #pass
             #print traceback.print_exc()
             # print out msg if there is an error parsing a serial msg
-            #print 'Cannot parse', splitData
+            print 'Cannot parse', splitData
             
 
 if __name__=='__main__':
