@@ -70,6 +70,9 @@ void RobotPose::update(float dThetaL, float dThetaR) {
     
     X += dX;
     Y += dY;
+
+    dTL=dThetaL
+    dTR=dThetaR
     
     pathDistance += sqrt(dX * dX + dY * dY);
 }
