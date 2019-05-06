@@ -61,11 +61,11 @@ class RobotPose {
     float X, Y;          // robot X,Y position in meters
     float Th;            // robot orientation in rad
     float pathDistance;  // trajectory path distance in meters
-    float dTL,dTR;
+    //float dTL,dTR;
     
     RobotPose():
       Th(0),
-      X(0), Y(0), pathDistance(0),dTL(0),dTR(0) {}
+      X(0), Y(0), pathDistance(0){}//,dTL(0),dTR(0) {}
       
     void update(float dThetaL, float dThetaR); // update the odometry from delta in R and L wheel positions
     
