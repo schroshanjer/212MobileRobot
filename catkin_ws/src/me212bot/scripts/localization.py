@@ -29,9 +29,11 @@ class State(object):
         self.encoder_data=[]
 
         self.tag_num=2
-        self.tag_pose=np.array([0,0,-np.pi])
+        #self.tag_pose=np.array([0,0,-np.pi])
         self.tag_data=[None]*self.tag_num
-
+    def clear_measure():
+        self.encoder_data=[]
+        self.tag_data=[None]*self.tag_num
 
 state=State()
 
@@ -49,8 +51,9 @@ def encoder_callback(data):
 def Localization():
     while True:
         rospy.sleep(1.)
-        print state.encoder_data
+        #print state.encoder_data
         print state.tag_data
+        state.clear_measure()
         pass
 
 def main():
