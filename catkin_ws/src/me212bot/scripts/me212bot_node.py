@@ -75,6 +75,7 @@ def read_odometry_loop():
 
             
         except:
+            raise
             # print out msg if there is an error parsing a serial msg
             print 'Cannot parse', splitData
             
