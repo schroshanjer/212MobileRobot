@@ -10,6 +10,8 @@ import tf.transformations as tfm
 from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 from std_msgs.msg import Header
 
+import traceback
+
 import helper
 from me212bot.msg import WheelCmdVel
 
@@ -74,8 +76,8 @@ def read_odometry_loop():
             odom_pub.publish(pose_stamp)
 
             
-        except:
-            raise
+        except Exception:
+            print traceback.print_exc()
             # print out msg if there is an error parsing a serial msg
             print 'Cannot parse', splitData
             
