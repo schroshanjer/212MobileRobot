@@ -60,11 +60,13 @@ def read_odometry_loop():
 
             dTL=float(splitData[3])
             dTR=float(splitData[4])
+
+            distance=float(splitData[5])
             
             hz    = 1.0 / (rospy.Time.now().to_sec() - prevtime.to_sec())
             prevtime = rospy.Time.now()
             
-            print 'dtl=', dTL, 'dtr=', dTR
+            print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
             
             # publish odometry as Pose msg
