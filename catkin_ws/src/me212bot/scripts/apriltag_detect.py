@@ -42,7 +42,7 @@ def apriltag_callback(data):
             pose_stamp=PoseStamped()
             pose_stamp.header.stamp = tt
             pose_stamp.header.frame_id = "/base"
-            pose_stamp.header.pose=tag_pose
+            pose_stamp.pose=tag_pose
             tag_pubs[detection.id].publish()
         #poselist_base_tag = invPoselist(poselist_tag_base)
         #poselist_base_map = transformPose(lr, poselist_base_tag, 'apriltag', 'map')
