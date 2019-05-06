@@ -37,6 +37,7 @@ def apriltag_callback(data):
         #if detection.id == 1:   # tag id is the correct one
         poselist_tag_cam = pose2poselist(detection.pose)
         poselist_tag_base = transformPose(lr, poselist_tag_cam, 'camera', 'robot_base')
+        print poselist_tag_base
         tag_pose=poselist2pose(poselist_tag_base)
         if detection.id in tag_id_list:
             pose_stamp=PoseStamped()
