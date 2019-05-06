@@ -56,7 +56,8 @@ def read_odometry_loop():
         splitData = serialData.split(',')
 
         wheelencode=WheelEncoder()
-        wheelencode.Timestamp=time.time()
+        wheelencode.Timestamp=prevtime.to_sec()
+        print prevtime.to_sec()
         #pose_stamp.header.stamp = rospy.Time.now()
         
         # parse the 3 split strings into 3 floats
@@ -76,7 +77,7 @@ def read_odometry_loop():
             wheelencode.Theta_R=dTR
             wheelencode.Theta_L=dTL
             
-            print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
+            #print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz
             
             # publish odometry as Pose msg
