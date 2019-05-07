@@ -46,7 +46,7 @@ def april_tag_callback(data,tag_id):
     state.tag_time=data.header.stamp.to_sec()
     data=pose2poselist(data.pose)
     x,y=data[0:2]
-    theta=tfm.euler_from_quaternion(data[3:7]) [2]
+    theta=tfm.euler_from_quaternion(data[3:7])
     state.tag_data[tag_id]=[x,y,theta]
     #state.tag_measure_time=data.header.stamp.to_sec()
 
