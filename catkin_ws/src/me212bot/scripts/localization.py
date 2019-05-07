@@ -31,17 +31,22 @@ class State(object):
         self.tag_num=2
         #self.tag_pose=np.array([0,0,-np.pi])
         self.tag_data=[None]*self.tag_num
+        self.tag_measure_time=None
     def clear_measure(self):
         self.encoder_data=[]
         self.tag_data=[None]*self.tag_num
+        self.tag_measure_time=None
 
 state=State()
 
 
 def april_tag_callback(data,tag_id):
+    data=pose2poselist(data.pose)
     x,y=data[0:2]
     theta=tfm.euler_from_quaternion(data[3:7]) [2]
     state.tag_data[tag_id]=[x,y,theta]
+    state.tag_measure_time=data.header.stamp.to_sec()
+
     pass
 
 def encoder_callback(data):
@@ -54,6 +59,7 @@ def Localization():
         rospy.sleep(1.)
         #print state.encoder_data
         print state.tag_data
+        print state.tag_measure_time
         state.clear_measure()
         pass
 
