@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # Estimation parameter of EKF
 Q = np.diag([0.1, 0.1, np.deg2rad(1.0), 1.0])**2  # predict state covariance
-R = np.diag([1.0, 1.0])**2  # Observation x,y position covariance
+R0 = np.array([0.2, np.deg2rad(6.), np.deg2rad(6.0)])**2  # Observation x,y position covariance
 
 #  Simulation parameter
 Qsim = np.diag([1.0, np.deg2rad(30.0)])**2
@@ -50,7 +50,7 @@ def observation(xTrue, xd, u):
     return xTrue, z, xd, ud
 
 
-def motion_model(x, u):
+def motion_model(x, u,DT):
 
     F = np.array([[1.0, 0, 0, 0],
                   [0, 1.0, 0, 0],
@@ -71,7 +71,8 @@ def observation_model(x):
     #  Observation Model
     H = np.array([
         [1, 0, 0, 0],
-        [0, 1, 0, 0]
+        [0, 1, 0, 0],
+        [0,0,1,0]
     ])
 
     z = H@x
@@ -79,7 +80,7 @@ def observation_model(x):
     return z
 
 
-def jacobF(x, u):
+def jacobF(x, u,DT):
     """
     Jacobian of Motion Model
 
@@ -109,13 +110,45 @@ def jacobH(x):
     # Jacobian of Observation Model
     jH = np.array([
         [1, 0, 0, 0],
-        [0, 1, 0, 0]
+        [0, 1, 0, 0],
+        [0,0,1,0]
     ])
 
     return jH
 
+def cal_R(z,lm):
+    dx=lm[0]-z[0,0]
+    dy=lm[1]-z[1,0]
 
-def ekf_estimation(xEst, PEst, z, u):
+    r=np.sqrt(dx**2+dy**2)
+
+    R_1=np.diag([R0[0]*r**2, R0[1]*r**2])
+
+    eigen_r=np.array([dx,dy])/r
+
+    eigen_theta=np.array([dx,-dy])/r
+
+    S=np.array([eigen_r,eigen_theta])
+
+    R2=(S.dot(R_1)).dot(S.T)
+
+    R=np.zeros((3,3))
+    R[0:2,0:2]=R2
+    R[2,2]=R0[2]
+
+    return R
+
+def cal_Q(x,u,dt):
+    if u.norm()==0:
+        return np.zeros((4,4))
+    else:
+        return Q
+    pass
+
+
+
+
+def ekf_estimation(xEst, PEst, z):
 
     #  Predict
     xPred = motion_model(xEst, u)
@@ -130,6 +163,31 @@ def ekf_estimation(xEst, PEst, z, u):
     K = PPred@jH.T@np.linalg.inv(S)
     xEst = xPred + K@y
     PEst = (np.eye(len(xEst)) - K@jH)@PPred
+
+    return xEst, PEst
+
+def ekf_update(xEst, PEst, zs, u,lm,dt):
+
+    #  Predict
+    xPred = motion_model(xEst, u,dt)
+    xPred=xEst
+    jF = jacobF(xPred, u, dt)
+    PPred = jF@PEst@jF.T + Q#cal_Q(xEst,u,DT)
+    for z in zs:
+        
+        
+        lm_id=int(z[3,0])
+        z=z[0:3,:]
+
+        #  Update
+        jH = jacobH(xPred)
+        zPred = observation_model(xPred)
+        #print(zPred.shape,z.shape)
+        y = z - zPred
+        S = jH@PPred@jH.T + cal_R(z,lm[lm_id,:])
+        K = PPred@jH.T@np.linalg.inv(S)
+        xEst = xPred + K@y
+        PEst = (np.eye(len(xEst)) - K@jH)@PPred
 
     return xEst, PEst
 
@@ -156,10 +214,10 @@ def plot_covariance_ellipse(xEst, PEst):  # pragma: no cover
     fx = R@(np.array([x, y]))
     px = np.array(fx[0, :] + xEst[0, 0]).flatten()
     py = np.array(fx[1, :] + xEst[1, 0]).flatten()
-    plt.plot(px, py, "--r")
+    plt.plot(px, py, "--")
 
 
-def main():
+def main2():
     print(__file__ + " start!!")
 
     time = 0.0
@@ -207,4 +265,20 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    plt.cla()
+    xEst=np.array([[0,0,1.7,0]]).T
+    PEst = np.eye(4)
+
+    z=[np.array([0.1,0.2,0.1,0]).reshape(-1,1),np.array([0.1,0.2,0.1,1]).reshape(-1,1)]
+    lm=np.array([[2,3,1.7],
+                  [-1,2,1.7],
+        ])
+    #PEst=cal_R(xEst[:,0].T,lm)
+    plot_covariance_ellipse(xEst, PEst)
+    u=np.array([[1,1]]).T
+    xEst, PEst=ekf_update(xEst, PEst, z,u,lm,DT)
+
+    plot_covariance_ellipse(xEst, PEst)
+
+    plt.show()

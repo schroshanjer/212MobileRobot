@@ -15,6 +15,8 @@ import traceback,time
 from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad, poselist2pose
 from me212bot.msg import WheelCmdVel,WheelEncoder
 
+from extended_kalman_filter import *
+
 rospy.init_node('localization',anonymous=True)
 
 def pi_2_pi(angle):
@@ -27,13 +29,35 @@ class State(object):
         #self.arg = arg
 
         self.encoder_data=[]
+        self.last_encoder=None
+        self.last_encoder_time=None
 
         self.tag_num=2
         #self.tag_pose=np.array([0,0,-np.pi])
         self.tag_data=[None]*self.tag_num
         self.tag_time=None
         self.last_tag_time=None
+
+        self.lm=np.array([[2,3,1.7],
+                  [0.,0.,-np.pi],
+        ])
+
+
+
+        self.pose=np.zeros(3)
+        self.xEst = np.zeros((4, 1))
+        self.PEst = np.eye(4)
+
     def clear_measure(self):
+        if self.encoder_data:
+            self.last_encoder=encoder_data[-1]
+            self.last_encoder_time=encoder_data[-1].Time_Stamp
+            if self.tag_time and self.tag_time>self.last_encoder_time:
+                self.last_encoder_time=self.tag_time
+        elif self.tag_time:
+            self.last_encoder_time=self.tag_time
+
+
         self.last_tag_time=self.tag_time
         self.encoder_data=[]
         self.tag_data=[None]*self.tag_num
@@ -41,12 +65,20 @@ class State(object):
 
 state=State()
 
+def get_u(dt,dTheta_L,dTheta_R):
+    b = 0.225
+    r = 0.037
+    v= (dTheta_L+dTheta_R)/2*r/dt
+    v2= (dTheta_L-dTheta_R)/b/dt
+    return np.array([[v,v2]]).T
+
+
 
 def april_tag_callback(data,tag_id):
     state.tag_time=data.header.stamp.to_sec()
     data=pose2poselist(data.pose)
     x,y=data[0:2]
-    theta=tfm.euler_from_quaternion(data[3:7])
+    theta=tfm.euler_from_quaternion(data[3:7])[2]
     state.tag_data[tag_id]=[x,y,theta]
     #state.tag_measure_time=data.header.stamp.to_sec()
 
@@ -57,13 +89,129 @@ def encoder_callback(data):
     state.encoder_data.append(data)
     pass
 
+def observation(lm,tag_data):
+    z=[]
+    for i in range(state.tag_num):
+        if tag_data[i]:
+            x=lm[i,0]-tag_data[i][1]
+            y=lm[i,1]-tag_data[i][0]
+            pose=lm[i,2]-tag_data[i][2]
+            z.append(np.array([x,y,pose,i]).reshape(-1,1))
+    pass
+
+
 def Localization():
+    # last_encoder_time=0
+    # last_encoder=[]
     while True:
-        rospy.sleep(1.)
+        rospy.sleep(0.1)
         #print state.encoder_data
-        print state.tag_data
-        print state.tag_time
+        encoder_list=state.encoder_data
+        tag_data=state.tag_data
+        tag_time=state.tag_time
+        last_tag_time=state.tag_data
+        last_encoder=state.last_encoder
+        last_encoder_time=state.last_encoder_time
+
+        if not encoder_list and not tag_time:
+            continue
+
+        xEst=state.xEst
+        PEst=state.PEst
+        lm=state.lm
+
+        # if not last_encoder_time:
+        #     print 'no previous encoder, skip this step'
+        if not last_encoder:
+            if encoder_list:
+                last_encoder=encoder_list[0]
+                last_encoder_time=encoder_list[0].Time_Stamp
+            else:
+                last_encoder_time=tag_time
+            #state.clear_measure()
+        #last_encoder_time=state.last_encoder
+        #print state.tag_data
+        #print state.tag_time
         state.clear_measure()
+
+
+        encoder_time_list=np.array([ec.Time_Stamp for ec in encoder_list])
+        if tag_time: 
+            encoder_list_1=encoder_list[np.where(encoder_time_list<=tag_time)]
+
+            encoder_list_2=encoder_list[np.where(encoder_time_list>tag_time)]
+        else:
+            encoder_list_1=encoder_list
+            encoder_list_2=[]
+
+        if encoder_list_1:
+            dt=encoder_list_1[0]-last_encoder_time
+            
+            dTheta_L=encoder_list_1[0].Theta_L-last_encoder.Theta_L
+            dTheta_R=encoder_list_1[0].Theta_R-last_encoder.Theta_R
+
+            u=get_u(dt,dTheta_L,dTheta_R)
+
+            ekf_update(xEst, PEst, [], u,lm,dt)
+
+            last_encoder_time=encoder_list_1[0].Time_Stamp
+            last_encoder=encoder_list_1[0]
+
+            for i in range(1,len(encoder_list_1)):
+                dt=encoder_list_1[i]-encoder_list_1[i-1]
+                dTheta_L=encoder_list_1[i].Theta_L-encoder_list_1[i-1].Theta_L
+                dTheta_R=encoder_list_1[i].Theta_R-encoder_list_1[i-1].Theta_R
+                u=get_u(dt,dTheta_L,dTheta_R)
+                ekf_update(xEst, PEst, [], u,lm,dt)
+                last_encoder_time=encoder_list_1[i].Time_Stamp
+                last_encoder=encoder_list_1[i]
+
+        if tag_time:
+            dt=encoder_list_1[0]-last_encoder_time
+            if encoder_list_2:
+                dt2=encoder_list_2-tag_time
+                dTheta_L=encoder_list_2[0].Theta_L-last_encoder.Theta_L
+                dTheta_R=encoder_list_2[0].Theta_R-last_encoder.Theta_R
+
+                dTheta_L=dTheta_L/(dt+dt2)*dt
+                dTheta_R=dTheta_R/(dt+dt2)*dt
+            else:
+                dTheta_L=0
+                dTheta_R=0
+            u=get_u(dt,dTheta_L,dTheta_R)
+
+            z=observation(lm,tag_data)
+
+            ekf_update(xEst, PEst, z, u,lm,dt)
+            # last_encoder_time=encoder_list_1[i].Time_Stamp
+            # last_encoder=encoder_list_1[i]
+
+        if encoder_list_2:
+            dt=encoder_list_2[0]-last_encoder_time
+            
+            dTheta_L=encoder_list_2[0].Theta_L-last_encoder.Theta_L
+            dTheta_R=encoder_list_2[0].Theta_R-last_encoder.Theta_R
+
+            u=get_u(dt,dTheta_L,dTheta_R)
+
+            ekf_update(xEst, PEst, [], u,lm,dt)
+
+            last_encoder_time=encoder_list_2[0].Time_Stamp
+            last_encoder=encoder_list_2[0]
+
+            for i in range(1,len(encoder_list_2)):
+                dt=encoder_list_2[i]-encoder_list_2[i-1]
+                dTheta_L=encoder_list_2[i].Theta_L-encoder_list_2[i-1].Theta_L
+                dTheta_R=encoder_list_2[i].Theta_R-encoder_list_2[i-1].Theta_R
+                u=get_u(dt,dTheta_L,dTheta_R)
+                ekf_update(xEst, PEst, [], u,lm,dt)
+                last_encoder_time=encoder_list_2[i].Time_Stamp
+                last_encoder=encoder_list_2[i]
+
+
+
+
+
         pass
 
 def main():
