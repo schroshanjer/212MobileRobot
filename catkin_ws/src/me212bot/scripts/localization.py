@@ -55,7 +55,7 @@ class State(object):
 
         self.pose=np.zeros(3)
         self.xEst = np.zeros((4, 1))
-        self.PEst = np.diag([0.1,0.1,np.pi/18.,0.1])**2
+        self.PEst = np.diag([0.1,0.1,np.pi/9.,0.1])**2
 
     def clear_measure(self):
         if self.encoder_data:
@@ -213,7 +213,7 @@ def Localization():
                 last_encoder=encoder_list_1[i]
 
         if tag_time:
-            dt=encoder_list_1[0].Time_Stamp-last_encoder_time
+            dt=tag_time-last_encoder_time
             if encoder_list_2:
                 dt2=encoder_list_2[0].Time_Stamp-tag_time
                 dTheta_L=encoder_list_2[0].Theta_L-last_encoder.Theta_L
@@ -255,8 +255,8 @@ def Localization():
                 last_encoder_time=encoder_list_2[i].Time_Stamp
                 last_encoder=encoder_list_2[i]
         
-        print xEst
-        print PEst
+        #print xEst
+        #print PEst
         state.xEst=xEst
         state.PEst=PEst
 

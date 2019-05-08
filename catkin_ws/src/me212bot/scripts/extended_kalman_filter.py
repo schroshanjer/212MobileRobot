@@ -11,8 +11,8 @@ import math
 import matplotlib.pyplot as plt
 
 # Estimation parameter of EKF
-Q0 = np.array([0.1, 0.1, 0.1, 1.0])**2  # predict state covariance
-R0 = np.array([0.1, np.deg2rad(3.), np.deg2rad(3.0)])**2  # Observation x,y position covariance
+Q0 = np.array([0.1, 0.1, 0.2, 1.0])**2  # predict state covariance
+R0 = np.array([0.1, np.deg2rad(5.), np.deg2rad(5.0)])**2  # Observation x, theta_robot,theta_atag position covariance
 
 #  Simulation parameter
 Qsim = np.diag([1.0, np.deg2rad(30.0)])**2
@@ -201,19 +201,27 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
         return xPred,PPred
     for z in zs:
         
-        print z
+        #print z
         lm_id=int(z[3,0])
         z=z[0:3,:]
 
         #  Update
-        jH = jacobH(xPred)
+        xPred_z=np.vstack([z,[0]])
+        
+        #jH = jacobH(xPred)
+        jH = jacobH(xPred_z)
         zPred = observation_model(xPred)
         #print(zPred.shape,z.shape)
         y = z - zPred
         S = jH.dot(PPred).dot(jH.T) + cal_R(z,lm[lm_id,:])
         K = PPred.dot(jH.T).dot(np.linalg.inv(S))
-        xEst = xPred + K.dot(y)
+        
+        #xEst = xPred + K.dot(y)
+        xEst = xPred_z + K.dot(-y)
+        
         PEst = (np.eye(len(xEst)) - K.dot(jH)).dot(PPred)
+        print z
+        print xEst
 
     return xEst, PEst
 
