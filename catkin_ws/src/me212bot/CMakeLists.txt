@@ -21,6 +21,7 @@ add_message_files(
   FILES
   WheelCmdVel.msg
   WheelEncoder.msg
+  RobotPose.msg
 )
 
 ## Generate services in the 'srv' folder
