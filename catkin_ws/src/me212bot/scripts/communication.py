@@ -66,11 +66,12 @@ def Call_Delta_Mobile_left():
 def sent_param(ip,param,value):
     cmd1='export ROS_MASTER_URI=http://%s:11311'%ip
     cmd2='rosparam set %s '%param+str(value)
-    process = subprocess.Popen("/bin/bash", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE);
-    process.stdin.write("cmd1\n")
-    process.stdin.write("cmd2\n")
+    process = subprocess.Popen("bash", shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE);
+    process.stdin.write(cmd1+"\n")
+    process.stdin.write(cmd2+"\n")
     process.stdin.flush()
     stdout, stderr = process.communicate()
+    print stdout,stderr
     return not bool(stderr)
     pass
 
