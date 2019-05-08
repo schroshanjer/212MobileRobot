@@ -62,7 +62,7 @@ def motion_model(x, u,DT):
                   [0.0, DT],
                   [1.0, 0.0]])
 
-    x = F@x + B@u
+    x = F.dot(x) + B.dot(u)
 
     return x
 
@@ -75,7 +75,7 @@ def observation_model(x):
         [0,0,1,0]
     ])
 
-    z = H@x
+    z = H.dot(x)
 
     return z
 
@@ -153,16 +153,16 @@ def ekf_estimation(xEst, PEst, z):
     #  Predict
     xPred = motion_model(xEst, u)
     jF = jacobF(xPred, u)
-    PPred = jF@PEst@jF.T + Q
+    PPred = jF.dot(PEst).dot(jF.T) + Q
 
     #  Update
     jH = jacobH(xPred)
     zPred = observation_model(xPred)
     y = z - zPred
-    S = jH@PPred@jH.T + R
-    K = PPred@jH.T@np.linalg.inv(S)
-    xEst = xPred + K@y
-    PEst = (np.eye(len(xEst)) - K@jH)@PPred
+    S = jH.dot(PPred).dot(jH.T) + R
+    K = PPred.dot(jH.T).dot(np.linalg.inv(S))
+    xEst = xPred + K.dot(y)
+    PEst = (np.eye(len(xEst)) - K.dot(jH)).dot(PPred)
 
     return xEst, PEst
 
@@ -172,7 +172,7 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
     xPred = motion_model(xEst, u,dt)
     xPred=xEst
     jF = jacobF(xPred, u, dt)
-    PPred = jF@PEst@jF.T + Q#cal_Q(xEst,u,DT)
+    PPred = jF.dot(PEst).dot(jF.T) + Q#cal_Q(xEst,u,DT)
     for z in zs:
         
         
@@ -184,10 +184,10 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
         zPred = observation_model(xPred)
         #print(zPred.shape,z.shape)
         y = z - zPred
-        S = jH@PPred@jH.T + cal_R(z,lm[lm_id,:])
-        K = PPred@jH.T@np.linalg.inv(S)
-        xEst = xPred + K@y
-        PEst = (np.eye(len(xEst)) - K@jH)@PPred
+        S = jH.dot(PPred).dot(jH.T) + cal_R(z,lm[lm_id,:])
+        K = PPred.dot(jH.T).dot(np.linalg.inv(S))
+        xEst = xPred + K.dot(y)
+        PEst = (np.eye(len(xEst)) - K.dot(jH)).dot(PPred)
 
     return xEst, PEst
 
@@ -211,7 +211,7 @@ def plot_covariance_ellipse(xEst, PEst):  # pragma: no cover
     angle = math.atan2(eigvec[bigind, 1], eigvec[bigind, 0])
     R = np.array([[math.cos(angle), math.sin(angle)],
                   [-math.sin(angle), math.cos(angle)]])
-    fx = R@(np.array([x, y]))
+    fx = R.dot(np.array([x, y]))
     px = np.array(fx[0, :] + xEst[0, 0]).flatten()
     py = np.array(fx[1, :] + xEst[1, 0]).flatten()
     plt.plot(px, py, "--")
