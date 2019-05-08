@@ -38,15 +38,15 @@ class State(object):
         self.tag_time=None
         self.last_tag_time=None
 
-        self.lm=np.array([[2,3,1.7],
-                  [0.,0.,-np.pi],
+        self.lm=np.array([[2,3,1.71],
+                  [0.,0.,np.pi],
         ])
 
 
 
         self.pose=np.zeros(3)
         self.xEst = np.zeros((4, 1))
-        self.PEst = np.eye(4)
+        self.PEst = np.diag([0.1,0.1,np.pi/18.,0.1])**2
 
     def clear_measure(self):
         if self.encoder_data:
@@ -71,7 +71,7 @@ def get_u(dt,dTheta_L,dTheta_R):
     if dt==0:
         return np.array([[0.,0.]]).T
     v= (dTheta_L+dTheta_R)/2*r/dt
-    v2= (dTheta_L-dTheta_R)*r/b/dt
+    v2= (dTheta_R-dTheta_L)*r/b/dt
     return np.array([[v,v2]]).T
 
 
@@ -97,9 +97,11 @@ def observation(lm,tag_data):
         if tag_data[i]:
             x=lm[i,0]-tag_data[i][0]
             y=lm[i,1]-tag_data[i][1]
-            pose=lm[i,2]-tag_data[i][2]
+            print i, lm[i,2],tag_data[i]
+            pose=pi_2_pi(lm[i,2]-(tag_data[i][2]-np.pi/2))
+            print pose
             z.append(np.array([x,y,pose,i]).reshape(-1,1))
-    pass
+    return z
 
 
 def Localization():
@@ -139,9 +141,18 @@ def Localization():
 
         encoder_time_list=np.array([ec.Time_Stamp for ec in encoder_list])
         if tag_time: 
-            encoder_list_1=encoder_list[np.where(encoder_time_list<=tag_time)]
+            encoder_list_1=[]
+            encoder_list_2=[]
+            
+            for ii in range(len(encoder_time_list)):
+                if encoder_time_list[ii]<=tag_time:
+                    encoder_list_1.append(encoder_list[ii])
+                else:
+                    encoder_list_2.append(encoder_list[ii])
+                
+            #encoder_list_1=encoder_list[np.where(encoder_time_list<=tag_time)]
 
-            encoder_list_2=encoder_list[np.where(encoder_time_list>tag_time)]
+            #encoder_list_2=encoder_list[np.where(encoder_time_list>tag_time)]
         else:
             encoder_list_1=encoder_list
             encoder_list_2=[]
@@ -154,9 +165,10 @@ def Localization():
 
             u=get_u(dt,dTheta_L,dTheta_R)
             
-            print u
-
+            #print u
+            
             xEst, PEst=ekf_update(xEst, PEst, [], u,lm,dt)
+            
 
             last_encoder_time=encoder_list_1[0].Time_Stamp
             last_encoder=encoder_list_1[0]
@@ -171,27 +183,28 @@ def Localization():
                 last_encoder=encoder_list_1[i]
 
         if tag_time:
-            dt=encoder_list_1[0]-last_encoder_time
+            dt=encoder_list_1[0].Time_Stamp-last_encoder_time
             if encoder_list_2:
-                dt2=encoder_list_2-tag_time
+                dt2=encoder_list_2[0].Time_Stamp-tag_time
                 dTheta_L=encoder_list_2[0].Theta_L-last_encoder.Theta_L
                 dTheta_R=encoder_list_2[0].Theta_R-last_encoder.Theta_R
 
                 dTheta_L=dTheta_L/(dt+dt2)*dt
                 dTheta_R=dTheta_R/(dt+dt2)*dt
             else:
-                dTheta_L=0
-                dTheta_R=0
-            xEst, PEst=u=get_u(dt,dTheta_L,dTheta_R)
+                dTheta_L=0.
+                dTheta_R=0.
+            u=get_u(dt,dTheta_L,dTheta_R)
 
             z=observation(lm,tag_data)
-
-            ekf_update(xEst, PEst, z, u,lm,dt)
+            #print 'before',xEst
+            xEst, PEst=ekf_update(xEst, PEst, z, u,lm,dt)
+            #print 'after',xEst
             # last_encoder_time=encoder_list_1[i].Time_Stamp
             # last_encoder=encoder_list_1[i]
 
         if encoder_list_2:
-            dt=encoder_list_2[0]-last_encoder_time
+            dt=encoder_list_2[0].Time_Stamp-last_encoder_time
             
             dTheta_L=encoder_list_2[0].Theta_L-last_encoder.Theta_L
             dTheta_R=encoder_list_2[0].Theta_R-last_encoder.Theta_R
@@ -204,7 +217,7 @@ def Localization():
             last_encoder=encoder_list_2[0]
 
             for i in range(1,len(encoder_list_2)):
-                dt=encoder_list_2[i]-encoder_list_2[i-1]
+                dt=encoder_list_2[i].Time_Stamp-encoder_list_2[i-1].Time_Stamp
                 dTheta_L=encoder_list_2[i].Theta_L-encoder_list_2[i-1].Theta_L
                 dTheta_R=encoder_list_2[i].Theta_R-encoder_list_2[i-1].Theta_R
                 u=get_u(dt,dTheta_L,dTheta_R)

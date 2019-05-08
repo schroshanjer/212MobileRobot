@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # Estimation parameter of EKF
 Q0 = np.array([0.1, 0.1, 0.1, 1.0])**2  # predict state covariance
-R0 = np.array([0.2, np.deg2rad(6.), np.deg2rad(6.0)])**2  # Observation x,y position covariance
+R0 = np.array([0.1, np.deg2rad(3.), np.deg2rad(3.0)])**2  # Observation x,y position covariance
 
 #  Simulation parameter
 Qsim = np.diag([1.0, np.deg2rad(30.0)])**2
@@ -100,8 +100,8 @@ def jacobF(x, u,DT):
     yaw = x[2, 0]
     v = u[0, 0]
     jF = np.array([
-        [1.0, 0.0, -DT * v * math.sin(yaw), DT * math.cos(yaw)],
-        [0.0, 1.0, DT * v * math.cos(yaw), DT * math.sin(yaw)],
+        [1.0, 0.0, -DT * v * math.sin(yaw), 0],#DT * math.cos(yaw)
+        [0.0, 1.0, DT * v * math.cos(yaw), 0],#DT * math.sin(yaw)
         [0.0, 0.0, 1.0, 0.0],
         [0.0, 0.0, 0.0, 1.0]])
 
@@ -144,8 +144,8 @@ def cal_Q(x,u,dt):
     Q=np.zeros((4,4))
     if np.linalg.norm(u)==0 or dt==0:
         return Q
-    x_err=Q0[0]*(u[0,0]*dt)**2
-    y_err=Q0[0]*(u[0,0]*np.sin(u[1,0]*dt)*dt)**2
+    x_err=Q0[0]*u[0,0]*dt
+    y_err=Q0[0]*u[0,0]*np.sin(u[1,0]*dt)*dt
     #print x_err,y_err
     theta_err=Q0[2]*(u[1,0]*dt)**2
     
@@ -157,8 +157,8 @@ def cal_Q(x,u,dt):
 
     #print Q2
     
-    H=np.array([[np.cos(yaw),-np.sin(yaw)],
-                [np.sin(yaw),np.cos(yaw)]])
+    H=np.array([[np.cos(yaw),np.sin(yaw)],
+                [-np.sin(yaw),np.cos(yaw)]])
 
     Q[0:2,0:2]=H.dot(Q2).dot(H.T)
     Q[2,2]=theta_err
@@ -195,11 +195,13 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
     #xPred=xEst
     jF = jacobF(xPred, u, dt)
     PPred = jF.dot(PEst).dot(jF.T) + cal_Q(xEst,u,DT)
+    #print jF.dot(PEst).dot(jF.T)
+    #print cal_Q(xEst,u,DT)
     if not zs:
         return xPred,PPred
     for z in zs:
         
-        
+        print z
         lm_id=int(z[3,0])
         z=z[0:3,:]
 
