@@ -11,7 +11,7 @@ import math
 import matplotlib.pyplot as plt
 
 # Estimation parameter of EKF
-Q = np.diag([0.1, 0.1, np.deg2rad(1.0), 1.0])**2  # predict state covariance
+Q0 = np.array([0.1, 0.1, 0.1, 1.0])**2  # predict state covariance
 R0 = np.array([0.2, np.deg2rad(6.), np.deg2rad(6.0)])**2  # Observation x,y position covariance
 
 #  Simulation parameter
@@ -63,6 +63,8 @@ def motion_model(x, u,DT):
                   [1.0, 0.0]])
 
     x = F.dot(x) + B.dot(u)
+    
+    #print 'Bu',x
 
     return x
 
@@ -139,10 +141,18 @@ def cal_R(z,lm):
     return R
 
 def cal_Q(x,u,dt):
-    if u.norm()==0:
-        return np.zeros((4,4))
-    else:
+    Q=np.zeros((4,4))
+    if u.norm()==0 or dt==0:
         return Q
+    x_err=Q0[0]*(u[0]*dt)**2
+    y_err=Q[0]*(u[0]*np.sin(u[1]*dt)*dt)**2
+    theta_err=Q0[2]*(u[1]*dt)**2
+    
+    yaw = x[2, 0]
+    
+    H=np.array([[np.cos(yaw),-np.sin(yaw)],
+                [np.sin(yaw),np.cos(yaw)]])
+    
     pass
 
 
@@ -170,9 +180,11 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
 
     #  Predict
     xPred = motion_model(xEst, u,dt)
-    xPred=xEst
+    #xPred=xEst
     jF = jacobF(xPred, u, dt)
-    PPred = jF.dot(PEst).dot(jF.T) + Q#cal_Q(xEst,u,DT)
+    PPred = jF.dot(PEst).dot(jF.T) + cal_Q(xEst,u,DT)
+    if not zs:
+        return xPred,PPred
     for z in zs:
         
         
