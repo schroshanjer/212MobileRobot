@@ -13,11 +13,13 @@ import numpy as np
 import traceback,time
 
 from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad, poselist2pose
-from me212bot.msg import WheelCmdVel,WheelEncoder
+from me212bot.msg import WheelCmdVel,WheelEncoder,RobotPose
 
 from extended_kalman_filter import *
 
 rospy.init_node('localization',anonymous=True)
+
+pub_pose=rospy.Publisher("/pose", RobotPose, queue_size = 1)
 
 def pi_2_pi(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi
@@ -102,6 +104,16 @@ def observation(lm,tag_data):
             print pose
             z.append(np.array([x,y,pose,i]).reshape(-1,1))
     return z
+
+def pubilish_pose(xEst,PEst,t):
+    pose=RobotPose()
+    pose.Time_Stamp=t
+    pose.x=xEst[0]
+    pose.y=xEst[1]
+    pose.yaw=xEst[2]
+    pose.err=PEst[0:3,0:3].reshape(-1)
+    pub_pose.publish(pose)
+    return
 
 
 def Localization():
@@ -229,6 +241,8 @@ def Localization():
         print PEst
         state.xEst=xEst
         state.PEst=PEst
+
+        pubilish_pose(xEst,PEst,last_encoder_time)
 
 
 
