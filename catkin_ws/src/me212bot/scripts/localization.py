@@ -44,6 +44,13 @@ class State(object):
                   [0.,0.,np.pi],
         ])
 
+        
+
+        #switch x,y
+        tt=np.array([[0.,1.,.0],[1.,0.,0.],[0.,0.,1.]])
+
+        self.lm=self.lm.dot(tt)
+
 
 
         self.pose=np.zeros(3)
@@ -108,10 +115,21 @@ def observation(lm,tag_data):
 def pubilish_pose(xEst,PEst,t):
     pose=RobotPose()
     pose.Time_Stamp=t
-    pose.x=xEst[0]
-    pose.y=xEst[1]
+    #switch x,y
+    pose.x=xEst[1]
+    pose.y=xEst[0]
     pose.yaw=xEst[2]
-    pose.err=PEst[0:3,0:3].reshape(-1)
+
+    # err=np.zeros((3,3))
+    # err[0,0]=PEst[1,1]
+    # err[0,1]=PEst[0,1]
+    # err[1,0]=PEst[1,0]
+    # err[]
+    tt=np.array([[0.,1.,.0],[1.,0.,0.],[0.,0.,1.]])
+
+    #switch x,y
+    pose.err=(tt.dot(PEst[0:3,0:3]).dot(tt)).reshape(-1)
+
     pub_pose.publish(pose)
     return
 
