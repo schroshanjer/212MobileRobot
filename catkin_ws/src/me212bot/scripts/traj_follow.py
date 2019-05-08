@@ -71,7 +71,8 @@ def getLinePara(target):
     #line[1]=
     a = np.cos(theta)#line[0][1] - line[1][1]
     b = np.sin(theta)#line[1][0] - line[0][0]
-    c = line[0][0] *line[1][1] - line[1][0] * line[0][1]
+    # c = line[0][0] *line[1][1] - line[1][0] * line[0][1]
+    c= -a*x-b*y
     return a,b,c
 
 def get_error(x,y,target):
@@ -79,7 +80,10 @@ def get_error(x,y,target):
     # tt=trajs[now_target_index[0]]
     # tl=trajs[last_target_index[0]]
     #print tt.rot_center
+    a,b,c=getLinePara(target)
     d=(a*x+b*y+c)/(a**2+b**2)
+
+    return d
     # if tt.isstright:
     #     a,b,c=getLinePara(lm)
     #     d=abs(a*x+b*y+c)/(a**2+b**2)
@@ -130,35 +134,39 @@ def get_proposed_angle(x,y):
             #if predict_angle>np.pi:predict_angle-=2*np.pi
     return predict_angle
 
-def get_error_angle(angle,x,y):
-    #print now_target_index[0]
-    tt=trajs[now_target_index[0]]
-    tl=trajs[last_target_index[0]]
-    #print tt.rot_center
-    if tt.isstright:
-        # a,b,c=getLinePara([tt,tl])
-        # d=abs(a*x+b*y+c)/(a**2+b**2)
-        # if cal_angle((x,y),tl,tl)<0:
-        #     d=-d
-        predict_angle=np.arctan2(-tt[1]+tl[1],-tt[0]+tl[0])
-        err=predict_angle-angle
-        if err<np.pi:err+=2*np.pi
-        if err>np.pi:err-=2*np.pi
-    else:
-        if tt.direction==1:
-            predict_angle=np.arctan2(-y+tt.rot_center[1],-x+tt.rot_center[0])-np.pi/2
-            #if predict_angle<-np.pi:predict_angle+=2*np.pi
-            err=predict_angle-angle
-            if err<np.pi:err+=2*np.pi
-            if err>np.pi:err-=2*np.pi
-        else:
-            predict_angle=np.arctan2(-y+tt.rot_center[1],-x+tt.rot_center[0])+np.pi/2
-            #if predict_angle>np.pi:predict_angle-=2*np.pi
-            err=predict_angle-angle
-            if err<np.pi:err+=2*np.pi
-            if err>np.pi:err-=2*np.pi
-        #err=get_len(tt.rot_center,(x,y))-tt.rot_r
+def get_error_angle(x,y,yaw,target):
+    theta=target[2]
+
+    err=-pi_2_pi(yaw-theta)
     return err
+    #print now_target_index[0]
+    # tt=trajs[now_target_index[0]]
+    # tl=trajs[last_target_index[0]]
+    # #print tt.rot_center
+    # if tt.isstright:
+    #     # a,b,c=getLinePara([tt,tl])
+    #     # d=abs(a*x+b*y+c)/(a**2+b**2)
+    #     # if cal_angle((x,y),tl,tl)<0:
+    #     #     d=-d
+    #     predict_angle=np.arctan2(-tt[1]+tl[1],-tt[0]+tl[0])
+    #     err=predict_angle-angle
+    #     if err<np.pi:err+=2*np.pi
+    #     if err>np.pi:err-=2*np.pi
+    # else:
+    #     if tt.direction==1:
+    #         predict_angle=np.arctan2(-y+tt.rot_center[1],-x+tt.rot_center[0])-np.pi/2
+    #         #if predict_angle<-np.pi:predict_angle+=2*np.pi
+    #         err=predict_angle-angle
+    #         if err<np.pi:err+=2*np.pi
+    #         if err>np.pi:err-=2*np.pi
+    #     else:
+    #         predict_angle=np.arctan2(-y+tt.rot_center[1],-x+tt.rot_center[0])+np.pi/2
+    #         #if predict_angle>np.pi:predict_angle-=2*np.pi
+    #         err=predict_angle-angle
+    #         if err<np.pi:err+=2*np.pi
+    #         if err>np.pi:err-=2*np.pi
+    #     #err=get_len(tt.rot_center,(x,y))-tt.rot_r
+    # return err
     pass
 
 
