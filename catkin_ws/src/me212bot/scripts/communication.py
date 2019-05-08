@@ -27,7 +27,7 @@ DELTA_IP='192.168.0.64'
 
 def Call_Mobile_Pizza_ready():
     for i in range(10):
-        result=sent_param(MOBILE_IP,'PIZZA_READY',1)
+        result=sent_param(MOBILE_IP,'/PIZZA_READY',1)
         if result:
             return True
         time.sleep(0.1)
@@ -36,7 +36,7 @@ def Call_Mobile_Pizza_ready():
 
 def Call_Mobile_Pizza_pushed():
     for i in range(10):
-        result=sent_param(MOBILE_IP,'PIZZA_PUSHED',1)
+        result=sent_param(MOBILE_IP,'/PIZZA_PUSHED',1)
         if result:
             return True
         time.sleep(0.1)
@@ -45,7 +45,7 @@ def Call_Mobile_Pizza_pushed():
 
 def Call_Delta_Mobile_arrived():
     for i in range(10):
-        result=sent_param(DELTA_IP,'MOBILE_ARRIVED',1)
+        result=sent_param(DELTA_IP,'/MOBILE_ARRIVED',1)
         if result:
             return True
         time.sleep(0.1)
@@ -55,7 +55,7 @@ def Call_Delta_Mobile_arrived():
 
 def Call_Delta_Mobile_left():
     for i in range(10):
-        result=sent_param(DELTA_IP,'MOBILE_ARRIVED',0)
+        result=sent_param(DELTA_IP,'/MOBILE_ARRIVED',0)
         if result:
             return True
         time.sleep(0.1)
