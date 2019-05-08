@@ -142,16 +142,28 @@ def cal_R(z,lm):
 
 def cal_Q(x,u,dt):
     Q=np.zeros((4,4))
-    if u.norm()==0 or dt==0:
+    if np.linalg.norm(u)==0 or dt==0:
         return Q
-    x_err=Q0[0]*(u[0]*dt)**2
-    y_err=Q[0]*(u[0]*np.sin(u[1]*dt)*dt)**2
-    theta_err=Q0[2]*(u[1]*dt)**2
+    x_err=Q0[0]*(u[0,0]*dt)**2
+    y_err=Q0[0]*(u[0,0]*np.sin(u[1,0]*dt)*dt)**2
+    #print x_err,y_err
+    theta_err=Q0[2]*(u[1,0]*dt)**2
     
     yaw = x[2, 0]
+
+    Q2=np.diag([x_err,y_err])
+
+    #print Q2
+
+    #print Q2
     
     H=np.array([[np.cos(yaw),-np.sin(yaw)],
                 [np.sin(yaw),np.cos(yaw)]])
+
+    Q[0:2,0:2]=H.dot(Q2).dot(H.T)
+    Q[2,2]=theta_err
+
+    return Q
     
     pass
 
@@ -287,10 +299,15 @@ if __name__ == '__main__':
                   [-1,2,1.7],
         ])
     #PEst=cal_R(xEst[:,0].T,lm)
-    plot_covariance_ellipse(xEst, PEst)
+    #plot_covariance_ellipse(xEst, PEst)
     u=np.array([[1,1]]).T
-    xEst, PEst=ekf_update(xEst, PEst, z,u,lm,DT)
+    #xEst, PEst=ekf_update(xEst, PEst, z,u,lm,DT)
 
+    PEst=np.diag([3,1])
+    yaw=np.pi/6
+    H=np.array([[np.cos(yaw),-np.sin(yaw)],
+        [np.sin(yaw),np.cos(yaw)]])
+    PEst=H.dot(PEst).dot(H.T)
     plot_covariance_ellipse(xEst, PEst)
 
     plt.show()
