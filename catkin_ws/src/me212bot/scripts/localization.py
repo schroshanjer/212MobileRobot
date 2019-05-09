@@ -40,10 +40,10 @@ class State(object):
         self.tag_time=None
         self.last_tag_time=None
 
-        self.lm=np.array([[2,3,1.71],
+        self.lm=np.array([[0.528,0.747,0.],
                   [0.,0.,np.pi],
                   [1.952,2.48,np.pi],
-                  [0.,0.,np.pi],
+                  [1.543,0.368,np.pi/2],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
@@ -113,11 +113,22 @@ def observation(lm,tag_data):
     z=[]
     for i in range(state.tag_num):
         if tag_data[i]:
-            x=lm[i,0]-tag_data[i][0]
-            y=lm[i,1]-tag_data[i][1]
+            r=np.sqrt(tag_data[i][0]**2+tag_data[i][1]**2)
+            #x=lm[i,0]-tag_data[i][0]
+            #y=lm[i,1]-tag_data[i][1]
+            
             print i, lm[i,:],tag_data[i]
             pose=pi_2_pi(lm[i,2]-(tag_data[i][2]-np.pi/2))
             print pose
+            x0=tag_data[i][0]
+            y0=tag_data[i][1]
+            x1=x0*np.cos(pose)-y0*np.sin(pose)
+            y1=x0*np.sin(pose)+y0*np.cos(pose)
+            #print x1,y1
+            #thrta=pi_2_pi(np.arctan2(tag_data[i][1],tag_data[i][0])+pose)
+            x=lm[i,0]-x1
+            y=lm[i,1]-y1
+            print x,y
             z.append(np.array([x,y,pose,i]).reshape(-1,1))
     return z
 
@@ -134,7 +145,7 @@ def pubilish_pose(xEst,PEst,t):
     # err[0,1]=PEst[0,1]
     # err[1,0]=PEst[1,0]
     # err[]
-    tt=np.array([[0.,1.,.0],[1.,0.,0.],[0.,0.,1.]])
+    tt=np.array([[0.,1.,.0],[-1.,0.,0.],[0.,0.,1.]])
 
     #switch x,y
     pose.err=(tt.dot(PEst[0:3,0:3]).dot(tt)).reshape(-1)
