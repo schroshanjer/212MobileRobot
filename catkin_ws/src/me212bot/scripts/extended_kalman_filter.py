@@ -23,6 +23,8 @@ SIM_TIME = 50.0  # simulation time [s]
 
 show_animation = True
 
+def pi_2_pi(angle):
+    return (angle + math.pi) % (2 * math.pi) - math.pi
 
 def calc_input():
     v = 1.0  # [m/s]
@@ -198,6 +200,7 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
     #print jF.dot(PEst).dot(jF.T)
     #print cal_Q(xEst,u,DT)
     if not zs:
+        xPred[2,0]=pi_2_pi(xPred[2,0])
         return xPred,PPred
     for z in zs:
         
@@ -218,6 +221,8 @@ def ekf_update(xEst, PEst, zs, u,lm,dt):
         
         #xEst = xPred + K.dot(y)
         xEst = xPred_z + K.dot(-y)
+        
+        xEst[2,0]=pi_2_pi(xEst[2,0])
         
         PEst = (np.eye(len(xEst)) - K.dot(jH)).dot(PPred)
         print z

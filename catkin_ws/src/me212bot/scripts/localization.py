@@ -47,7 +47,7 @@ class State(object):
         
 
         #switch x,y
-        tt=np.array([[0.,1.,.0],[1.,0.,0.],[0.,0.,1.]])
+        tt=np.array([[0.,1.,.0],[-1.,0.,0.],[0.,0.,1.]])
 
         self.lm=self.lm.dot(tt)
 
@@ -116,7 +116,7 @@ def pubilish_pose(xEst,PEst,t):
     pose=RobotPose()
     pose.Time_Stamp=t
     #switch x,y
-    pose.x=xEst[1]
+    pose.x=-xEst[1]
     pose.y=xEst[0]
     pose.yaw=xEst[2]
 
