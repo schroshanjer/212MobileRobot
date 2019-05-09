@@ -5,4 +5,5 @@
     <include file="$(find me212bot)/launch/frames.launch"/>
     <include file="$(find me212bot)/launch/viz.launch"/>
     <include file="$(find apriltags)/launch/apriltags.launch"/>
+    <include file="$(find rplidar_ros)/launch/rplidar.launch"/>
 </launch>
