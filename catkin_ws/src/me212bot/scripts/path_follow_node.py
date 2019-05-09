@@ -30,10 +30,12 @@ class State(object):
         self.y=None
         self.yaw=None
 
+        self.encoder_distance
+
         rospy.Subscriber("scan", LaserScan, self.laser_scan_callback)
 
         rospy.Subscriber("/pose", RobotPose, self.pose_calback)
-
+        rospy.Subscriber("/odom_encoder", WheelEncoder,self.encoder_callback, queue_size = 1)
         self.tag_num=8
         self.seen=[None]*self.tag_num
 
@@ -66,6 +68,11 @@ class State(object):
 
     def clear_seen(self):
         self.seen=[None]*self.tag_num
+
+    def encoder_callback(self,data):
+        self.encoder_distance=data.distance
+        #state.encoder_data.append(data)
+        pass
 
         pass
 
@@ -154,6 +161,56 @@ def move_to_target(target,v=0.5,stopmargin=None):
         rospy.sleep(0.1)
     rotate(target[2])
     return
+
+def dwa_distance(dis,vel_desired=0.1,stop_margin=0.05):
+    encoder0=state.encoder_distance
+    while True:
+        if self.laser_data:
+            break
+    while True:
+        if state.encoder_distance-encoder0>=dis:
+            pub_vel(0,0)
+            break
+        
+        
+        
+        alpha,distance,debug=find_direction(state.laser_data,margin=0.3)
+        #alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.4)
+        if distance<=stop_margin:
+            pub_vel(0,0)
+            break
+        wcv = WheelCmdVel()
+        desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
+        wcv.desiredWV_R = desiredWV_R
+        wcv.desiredWV_L = desiredWV_L
+        self.velcmd_pub.publish(wcv)
+        rospy.sleep(0.1)
+
+def move_forward(dis,vel_desired=0.1,stop_margin=0.05):
+    encoder0=state.encoder_distance
+    while True:
+        if state.encoder_distance-encoder0>=dis:
+            pub_vel(0,0)
+            break
+        alpha,distance,debug=find_direction(state.laser_data,angle_list=[0.],margin=0.3)
+        if distance<=stop_margin:
+            pub_vel(0,0)
+            break
+        pub_vel(vel_desired,0)
+        rospy.sleep(0.1)
+
+def move_backwward(dis,vel_desired=0.1):
+    encoder0=state.encoder_distance
+    while True:
+        if state.encoder_distance-encoder0>=dis:
+            pub_vel(0,0)
+            break
+        #alpha,distance,debug=find_direction(state.laser_data,angle_list=[0.],margin=0.3)
+        # if distance<=stop_margin:
+        #     pub_vel(0,0)
+        #     break
+        pub_vel(-vel_desired,0)
+        rospy.sleep(0.1)
 
 def move_to_target_reverse(target,v=0.5):
     #target0=target
