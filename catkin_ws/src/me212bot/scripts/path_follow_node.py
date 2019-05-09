@@ -266,8 +266,8 @@ def Move():
     while True:
         if state.laser_data:
             break
-    print find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,80/180.*np.pi,15),margin=0.2)
-
+    direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,80/180.*np.pi,15),margin=0.2)
+    print direction,distance
     pass
 
 def main():
