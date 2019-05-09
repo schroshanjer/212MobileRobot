@@ -87,7 +87,7 @@ def alpha_to_w(alpha,robotVel):
     return desiredWV_R,desiredWV_L
 
 
-def find_direction(laser_msgs, margin=0.5):
+def find_direction(laser_msgs,angle_list=None margin=0.5):
     #speed=speed_in_meter(speed)
     #alpha=servo_to_rad(servo)
     ranges=ranges_in_meter(np.array(laser_msgs.ranges))
@@ -108,8 +108,8 @@ def find_direction(laser_msgs, margin=0.5):
     intensity=intensity[valid_indx]
     obstacle=np.transpose([angles,ranges])
 
-
-    angle_list=np.linspace(-r_to_alpha(robot_b*2),r_to_alpha(robot_b*2),25)
+    if (angle_list is None):
+        angle_list=np.linspace(-r_to_alpha(robot_b*2),r_to_alpha(robot_b*2),25)
     #print angle_list
 
     distance_list=[]
@@ -156,7 +156,7 @@ def find_direction_rot(laser_msgs,angle_list=None, margin=0.5):
     intensity=intensity[valid_indx]
     obstacle=np.transpose([angles,ranges])
 
-    if not angle_list:
+    if (angle_list is None):
         angle_list=np.linspace(-80/180.*np.pi,80/180.*np.pi,15)
     #print angle_list
 
