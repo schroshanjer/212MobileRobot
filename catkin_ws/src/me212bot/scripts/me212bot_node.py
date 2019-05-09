@@ -68,6 +68,8 @@ def read_odometry_loop():
 
             dTL=float(splitData[3])
             dTR=float(splitData[4])
+            
+            #path_dis=float(splitData[4])
 
             distance=float(splitData[5])
             
@@ -77,6 +79,7 @@ def read_odometry_loop():
             wheelencode.Theta_R=dTR
             wheelencode.Theta_L=dTL
             wheelencode.Time_Stamp=prevtime.to_sec()
+            wheelencode.distance=distance
             
             #print 'TL=', dTL, 'TR=', dTR, 'PD=', distance
             #print 'x=', x, ' y=', y, ' theta =', theta, ' hz =', hz

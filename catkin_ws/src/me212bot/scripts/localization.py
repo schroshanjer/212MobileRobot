@@ -89,7 +89,7 @@ def get_u(dt,dTheta_L,dTheta_R):
     if dt==0:
         return np.array([[0.,0.]]).T
     v= (dTheta_L+dTheta_R)/2*r/dt
-    v2= (dTheta_R-dTheta_L)*r/b/dt
+    v2= (dTheta_R-dTheta_L)*r/b/dt/2
     return np.array([[v,v2]]).T
 
 

@@ -105,9 +105,12 @@ def rotate(target_yaw,threshold=np.deg2rad(1.)):
         #if abs(err)<np.deg2rad(10.):
         #    pid=(0.2,0.01,0.1)
         ss,_=PID(err,0.,previous_err,pid=pid)
-        ss=max(0.2,abs(ss))
+        ss=min(0.4,abs(ss))
+        #if abs(err)<np.deg2rad(10.):
+        #    #pid=(0.2,0.01,0.1)
+        #    ss=0.2
         #else:
-        #    ss=0.5
+        #    ss=0.4
         print 'err='+str(err)
         if err>0:
             pub_vel(0,-ss)
@@ -162,37 +165,38 @@ def move_to_target(target,v=0.5,stopmargin=None):
     rotate(target[2])
     return
 
-def dwa_distance(dis,vel_desired=0.2,stop_margin=0.05):
+def dwa_distance(dis,vel_desired=0.3,angle_list=None,stop_margin=0.01):
     encoder0=state.encoder_distance
     while True:
-        if self.laser_data:
+        if state.laser_data:
             break
     while True:
+        print state.encoder_distance-encoder0
         if state.encoder_distance-encoder0>=dis:
             pub_vel(0,0)
             break
         
         
         
-        alpha,distance,debug=find_direction(state.laser_data,margin=0.2)
+        alpha,distance,debug=find_direction(state.laser_data,angle_list=angle_list,margin=0.25)
         #alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.4)
         if distance<=stop_margin:
             pub_vel(0,0)
-            break
+            #break
         wcv = WheelCmdVel()
-        desiredWV_R,desiredWV_L=alpha_to_w(alpha,self.vel_desired)
+        desiredWV_R,desiredWV_L=alpha_to_w(alpha,vel_desired)
         wcv.desiredWV_R = desiredWV_R
         wcv.desiredWV_L = desiredWV_L
-        self.velcmd_pub.publish(wcv)
+        velcmd_pub.publish(wcv)
         rospy.sleep(0.1)
 
-def move_forward(dis,vel_desired=0.1,stop_margin=0.05):
+def move_forward(dis,vel_desired=0.1,stop_margin=0.01):
     encoder0=state.encoder_distance
     while True:
         if state.encoder_distance-encoder0>=dis:
             pub_vel(0,0)
             break
-        alpha,distance,debug=find_direction(state.laser_data,angle_list=[0.],margin=0.3)
+        alpha,distance,debug=find_direction(state.laser_data,angle_list=[0.],margin=0.25)
         if distance<=stop_margin:
             pub_vel(0,0)
             break
@@ -254,26 +258,41 @@ state=State()
 
 seq_list=[[1.952,1.75,0.],
         [1.952,1.15,0.],
+        [0.9098,0.8944,-np.deg2rad(160.)],
+        [1.1,0.35223,-np.pi/2],
+        [0.4166,0.2438,-np.pi/2]
         ]
 
 def Move():
     while True:
         if not (state.yaw is None):break
-    move_to_target(seq_list[0])
-    rospy.sleep(1.)
-    move_to_target_reverse(seq_list[1])
+    #move_to_target(seq_list[0])
+    #rospy.sleep(1.)
+    #move_to_target_reverse(seq_list[1])
 
     # while True:
     #     if state.laser_data:
     #         break
     
-    direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,0,15),margin=0.2)
-    print direction,distance
+    #direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,0,15),margin=0.2)
+    #print direction,distance
 
-    rotate(state.yaw-direction)
+    #rotate(state.yaw-direction)
+    
+    *alist=np.linspace(-r_to_alpha(robot_b*6),r_to_alpha(robot_b*6),25)
 
-    dwa_distance(1.)
+    #dwa_distance(1.7,angle_list=alist)
+    #rotate(np.pi)
 
+    move_to_target(seq_list[2])
+    rospy.sleep(0.1)
+    move_to_target(seq_list[3])
+    
+    rospy.sleep(0.1)
+    move_to_target_reverse(seq_list[4])
+    
+    move_to_target(seq_list[3])
+    rospy.sleep(1.)
     
 
 def main():
