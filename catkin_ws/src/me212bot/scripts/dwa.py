@@ -87,7 +87,7 @@ def alpha_to_w(alpha,robotVel):
     return desiredWV_R,desiredWV_L
 
 
-def find_direction(laser_msgs,angle_list=None margin=0.5):
+def find_direction(laser_msgs,angle_list=None,margin=0.5):
     #speed=speed_in_meter(speed)
     #alpha=servo_to_rad(servo)
     ranges=ranges_in_meter(np.array(laser_msgs.ranges))
