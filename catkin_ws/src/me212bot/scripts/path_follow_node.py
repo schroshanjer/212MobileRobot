@@ -39,7 +39,7 @@ class State(object):
 
 
 
-        tag_id_list=range(state.tag_num)
+        tag_id_list=range(self.tag_num)
         for tag_id in tag_id_list:
             rospy.Subscriber("/apriltag_pose_%d"%tag_id, PoseStamped,self.april_tag_callback,tag_id, queue_size = 1)
         pass
@@ -195,12 +195,16 @@ def move_to_target_reverse(target,v=0.5):
 
 state=State()
 
-seq_list=[[-0.3,-0.3,0.]]
+seq_list=[[1.952,1.75,0.],
+        [1.952,1.05,0.],
+        ]
 
 def Move():
     while True:
         if not (state.yaw is None):break
     move_to_target(seq_list[0])
+    rospy.sleep(1.)
+    move_to_target_reverse(seq_list[1])
 
     pass
 

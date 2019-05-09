@@ -42,17 +42,19 @@ class State(object):
 
         self.lm=np.array([[2,3,1.71],
                   [0.,0.,np.pi],
+                  [1.952,2.48,np.pi],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
                   [0.,0.,np.pi],
+                  #[0.,0.,np.pi],
         ])
 
         
 
         #switch x,y
-        tt=np.array([[0.,1.,.0],[-1.,0.,0.],[0.,0.,1.]])
+        tt=np.array([[0.,-1.,.0],[1.,0.,0.],[0.,0.,1.]])
 
         self.lm=self.lm.dot(tt)
 
@@ -60,8 +62,8 @@ class State(object):
 
         self.pose=np.zeros(3)
         self.xEst = np.zeros((4, 1))
-        self.xEst[0,0]=0.
-        self.xEst[1,0]=-1.0
+        self.xEst[0,0]=1.965
+        self.xEst[1,0]=0.34
         self.PEst = np.diag([0.1,0.1,np.pi/9.,0.1])**2
 
     def clear_measure(self):
@@ -113,7 +115,7 @@ def observation(lm,tag_data):
         if tag_data[i]:
             x=lm[i,0]-tag_data[i][0]
             y=lm[i,1]-tag_data[i][1]
-            print i, lm[i,2],tag_data[i]
+            print i, lm[i,:],tag_data[i]
             pose=pi_2_pi(lm[i,2]-(tag_data[i][2]-np.pi/2))
             print pose
             z.append(np.array([x,y,pose,i]).reshape(-1,1))

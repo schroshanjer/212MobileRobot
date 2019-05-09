@@ -146,10 +146,10 @@ def cal_Q(x,u,dt):
     Q=np.zeros((4,4))
     if np.linalg.norm(u)==0 or dt==0:
         return Q
-    x_err=Q0[0]*u[0,0]*dt
-    y_err=Q0[0]*u[0,0]*np.sin(u[1,0]*dt)*dt
+    x_err=Q0[0]*abs(u[0,0])*dt
+    y_err=Q0[0]*abs(u[0,0])*np.sin(u[1,0]*dt)*dt
     #print x_err,y_err
-    theta_err=Q0[2]*(u[1,0]*dt)**2
+    theta_err=Q0[2]*(abs(u[1,0])*dt)
     
     yaw = x[2, 0]
 
