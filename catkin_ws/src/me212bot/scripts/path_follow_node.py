@@ -257,11 +257,16 @@ seq_list=[[1.952,1.75,0.],
         ]
 
 def Move():
+    # while True:
+    #     if not (state.yaw is None):break
+    # move_to_target(seq_list[0])
+    # rospy.sleep(1.)
+    # move_to_target_reverse(seq_list[1])
+
     while True:
-        if not (state.yaw is None):break
-    move_to_target(seq_list[0])
-    rospy.sleep(1.)
-    move_to_target_reverse(seq_list[1])
+        if state.laser_data:
+            break
+    print find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,80/180.*np.pi,15),margin=0.2)
 
     pass
 
