@@ -12,6 +12,7 @@ from apriltags.msg import AprilTagDetections
 from helper import transformPose, pubFrame, cross2d, lookupTransform, pose2poselist, invPoselist, diffrad
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float64MultiArray
+from geometry_msgs.msg import Pose, Quaternion, PoseStamped
 
 from dwa import *
 from traj_follow import *
@@ -33,6 +34,16 @@ class State(object):
 
         rospy.Subscriber("/pose", RobotPose, self.pose_calback)
 
+        self.tag_num=8
+        self.seen=[None]*self.tag_num
+
+
+
+        tag_id_list=range(state.tag_num)
+        for tag_id in tag_id_list:
+            rospy.Subscriber("/apriltag_pose_%d"%tag_id, PoseStamped,self.april_tag_callback,tag_id, queue_size = 1)
+        pass
+
     def laser_scan_callback(self, msg):
         # check laser scan points for safe condition?
         self.laser_data=msg
@@ -43,6 +54,20 @@ class State(object):
         self.yaw=msg.yaw
         self.err=msg.err
         self.timestamp=msg.Time_Stamp
+
+    def april_tag_callback(self,data,tag_id):
+        self.seen[tag_id]=True
+        # state.tag_time=data.header.stamp.to_sec()
+        # data=pose2poselist(data.pose)
+        # x,y=data[0:2]
+        # theta=tfm.euler_from_quaternion(data[3:7])[2]
+        # state.tag_data[tag_id]=[x,y,theta]
+        #state.tag_measure_time=data.header.stamp.to_sec()
+
+    def clear_seen(self):
+        self.seen=[None]*self.tag_num
+
+        pass
 
 velcmd_pub = rospy.Publisher("/cmdvel", WheelCmdVel, queue_size = 1)
 
@@ -90,7 +115,7 @@ def cal_angle(pose,target):
     return angle
 
 
-def move_to_target(target,v=0.5):
+def move_to_target(target,v=0.5,stopmargin=None):
     #target0=target
     yaw_move=cal_angle([state.x,state.y],target)
     
@@ -111,6 +136,13 @@ def move_to_target(target,v=0.5):
             print 'arrived at',target[0:2]
             pub_vel(0.,0.)
             break
+
+        if (not (stopmargin is None)) and state.laser_data:
+            while True:
+                alpha,distance,debug=find_direction_rot(state.laser_data,angle_list=[0.],margin=stopmargin)
+                if distance[0]>0:
+                    break
+                print 'obstacle detected stoped'
 
         err=get_error(x,y,target_temp)
         angle_err=get_error_angle(x,y,yaw,target_temp)
