@@ -253,7 +253,7 @@ def move_to_target_reverse(target,v=0.5):
 state=State()
 
 seq_list=[[1.952,1.75,0.],
-        [1.952,1.05,0.],
+        [1.952,1.15,0.],
         ]
 
 def Move():
