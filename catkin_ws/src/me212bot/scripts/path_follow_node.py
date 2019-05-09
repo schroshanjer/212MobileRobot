@@ -163,6 +163,8 @@ def move_to_target(target,v=0.5,stopmargin=None):
         pub_vel(v,dtheta)
         rospy.sleep(0.1)
     rotate(target[2])
+
+    rospy.sleep(1.)
     return
 
 def dwa_distance(dis,vel_desired=0.3,angle_list=None,stop_margin=0.01):
@@ -250,6 +252,8 @@ def move_to_target_reverse(target,v=0.5):
         rospy.sleep(0.1)
     
     rotate(target[2])
+
+    rospy.sleep(1.)
     return
 
 
@@ -260,39 +264,50 @@ seq_list=[[1.952,1.75,0.],
         [1.952,1.15,0.],
         [0.9098,0.8944,-np.deg2rad(160.)],
         [1.1,0.35223,-np.pi/2],
-        [0.4166,0.2438,-np.pi/2]
+        [0.4166,0.2438,-np.pi/2],
+        [1.952,1.15,0.],
+        [1.952,1.15,np.pi/2],
         ]
 
 def Move():
     while True:
         if not (state.yaw is None):break
-    #move_to_target(seq_list[0])
+    while True:
+        if state.laser_data:
+            break
+    move_to_target(seq_list[1])
     #rospy.sleep(1.)
     #move_to_target_reverse(seq_list[1])
 
-    # while True:
-    #     if state.laser_data:
-    #         break
     
-    #direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,0,15),margin=0.2)
+    
+    direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,0,15),margin=0.2)
     #print direction,distance
 
     #rotate(state.yaw-direction)
     
-    *alist=np.linspace(-r_to_alpha(robot_b*6),r_to_alpha(robot_b*6),25)
+    alist=np.linspace(-r_to_alpha(robot_b*6),r_to_alpha(robot_b*6),25)
 
     #dwa_distance(1.7,angle_list=alist)
     #rotate(np.pi)
 
-    move_to_target(seq_list[2])
-    rospy.sleep(0.1)
+    move_to_target(seq_list[2],stopmargin=0.1)
+    #rospy.sleep(0.1)
     move_to_target(seq_list[3])
     
-    rospy.sleep(0.1)
+    #rospy.sleep(0.1)
     move_to_target_reverse(seq_list[4])
+
+    rospy.sleep(1.)
     
     move_to_target(seq_list[3])
-    rospy.sleep(1.)
+
+    next_point=seq_list[2]
+    next_point[2]=0.
+    move_to_target(next_point)
+
+    return
+    #rospy.sleep(1.)
     
 
 def main():
