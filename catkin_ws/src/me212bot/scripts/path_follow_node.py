@@ -30,7 +30,7 @@ class State(object):
         self.y=None
         self.yaw=None
 
-        self.encoder_distance
+        self.encoder_distance=0
 
         rospy.Subscriber("scan", LaserScan, self.laser_scan_callback)
 
