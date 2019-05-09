@@ -60,7 +60,7 @@ def pub_vel(v,dtheta):
 
 def rotate(target_yaw,threshold=np.deg2rad(1.)):
     print 'rotate to: '+str(target_yaw)
-    pid=(1,0.1,0.)
+    pid=(0.5,0.1,0.)
     previous_err=[]
     while True:
         err=pi_2_pi(state.yaw-target_yaw)
@@ -73,7 +73,7 @@ def rotate(target_yaw,threshold=np.deg2rad(1.)):
         #if abs(err)<np.deg2rad(10.):
         #    pid=(0.2,0.01,0.1)
         ss,_=PID(err,0.,previous_err,pid=pid)
-        ss=max(0.3,abs(ss))
+        ss=max(0.2,abs(ss))
         #else:
         #    ss=0.5
         print 'err='+str(err)
@@ -163,7 +163,7 @@ def move_to_target_reverse(target,v=0.5):
 
 state=State()
 
-seq_list=[[0.5,0.5,0.]]
+seq_list=[[-0.3,-0.3,0.]]
 
 def Move():
     while True:

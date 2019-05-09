@@ -34,13 +34,18 @@ class State(object):
         self.last_encoder=None
         self.last_encoder_time=None
 
-        self.tag_num=2
+        self.tag_num=8
         #self.tag_pose=np.array([0,0,-np.pi])
         self.tag_data=[None]*self.tag_num
         self.tag_time=None
         self.last_tag_time=None
 
         self.lm=np.array([[2,3,1.71],
+                  [0.,0.,np.pi],
+                  [0.,0.,np.pi],
+                  [0.,0.,np.pi],
+                  [0.,0.,np.pi],
+                  [0.,0.,np.pi],
                   [0.,0.,np.pi],
         ])
 
@@ -55,6 +60,8 @@ class State(object):
 
         self.pose=np.zeros(3)
         self.xEst = np.zeros((4, 1))
+        self.xEst[0,0]=0.
+        self.xEst[1,0]=-1.0
         self.PEst = np.diag([0.1,0.1,np.pi/9.,0.1])**2
 
     def clear_measure(self):

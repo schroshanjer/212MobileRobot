@@ -18,7 +18,9 @@ rospy.init_node('apriltag_detect', anonymous=True)
 lr = tf.TransformListener()
 br = tf.TransformBroadcaster()
 
-tag_id_list=range(5)
+TAG_CONSTANT=1.34/0.8165925073154084
+
+tag_id_list=range(8)
 tag_pubs=[]
 for tag_id in tag_id_list:
     tag_pubs.append(rospy.Publisher("/apriltag_pose_%d"%tag_id, PoseStamped, queue_size = 1))
@@ -36,7 +38,14 @@ def apriltag_callback(data):
     for detection in data.detections:
         #if detection.id == 1:   # tag id is the correct one
         poselist_tag_cam = pose2poselist(detection.pose)
+        #print np.sqrt(poselist_tag_cam[0]**2+poselist_tag_cam[1]**2+poselist_tag_cam[2])
+        #print poselist_tag_cam[0:3]
+        #poselist_tag_cam[0]=poselist_tag_cam[0]*TAG_CONSTANT
+        #poselist_tag_cam[1]=poselist_tag_cam[1]*TAG_CONSTANT
+        #poselist_tag_cam[2]=poselist_tag_cam[2]*TAG_CONSTANT
+        print poselist_tag_cam[0:3]
         poselist_tag_base = transformPose(lr, poselist_tag_cam, 'camera', 'robot_base')
+        print poselist_tag_base[0:3]
         #print poselist_tag_base
         #print type(detection.id)
         tag_pose=poselist2pose(poselist_tag_base)
