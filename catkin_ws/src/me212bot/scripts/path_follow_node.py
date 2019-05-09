@@ -162,7 +162,7 @@ def move_to_target(target,v=0.5,stopmargin=None):
     rotate(target[2])
     return
 
-def dwa_distance(dis,vel_desired=0.1,stop_margin=0.05):
+def dwa_distance(dis,vel_desired=0.2,stop_margin=0.05):
     encoder0=state.encoder_distance
     while True:
         if self.laser_data:
@@ -174,7 +174,7 @@ def dwa_distance(dis,vel_desired=0.1,stop_margin=0.05):
         
         
         
-        alpha,distance,debug=find_direction(state.laser_data,margin=0.3)
+        alpha,distance,debug=find_direction(state.laser_data,margin=0.2)
         #alpha_rot,distance_rot,debug_rot=find_direction_rot(self.laser_data,margin=0.4)
         if distance<=stop_margin:
             pub_vel(0,0)
@@ -257,18 +257,24 @@ seq_list=[[1.952,1.75,0.],
         ]
 
 def Move():
-    # while True:
-    #     if not (state.yaw is None):break
-    # move_to_target(seq_list[0])
-    # rospy.sleep(1.)
-    # move_to_target_reverse(seq_list[1])
-
     while True:
-        if state.laser_data:
-            break
-    direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,80/180.*np.pi,15),margin=0.2)
+        if not (state.yaw is None):break
+    move_to_target(seq_list[0])
+    rospy.sleep(1.)
+    move_to_target_reverse(seq_list[1])
+
+    # while True:
+    #     if state.laser_data:
+    #         break
+    
+    direction,distance,_=find_direction_rot(state.laser_data,np.linspace(-80/180.*np.pi,0,15),margin=0.2)
     print direction,distance
-    pass
+
+    rotate(state.yaw-direction)
+
+    dwa_distance(1.)
+
+    
 
 def main():
     thread = threading.Thread(target = Move)
