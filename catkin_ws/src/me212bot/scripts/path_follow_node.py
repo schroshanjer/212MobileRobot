@@ -123,6 +123,42 @@ def move_to_target(target,v=0.5):
     rotate(target[2])
     return
 
+def move_to_target_reverse(target,v=0.5):
+    #target0=target
+    #target[2]=-target[2]
+    yaw_move=pi_2_pi(cal_angle([state.x,state.y],target)+np.pi)
+    
+    rotate(yaw_move)
+    yaw=pi_2_pi(state.yaw+np.pi)
+    target_temp=[target[0],target[1],yaw]
+    pid=(0.2,0.01,0.1)
+    previous_err=[]
+    #return
+    #for i in range(10):
+    while True:
+        x=state.x
+        y=state.y
+        yaw=pi_2_pi(state.yaw+np.pi)
+        print x,y,target_temp
+        dis_err=distance_to_target(x,y,target_temp)
+        print 'dis_err=',dis_err
+        if dis_err<=0.005:
+            print 'arrived at',target[0:2]
+            pub_vel(0.,0.)
+            break
+
+        err=get_error(x,y,target_temp)
+        angle_err=get_error_angle(x,y,yaw,target_temp)
+
+        dtheta,pp=PID(err,angle_err,previous_err,pid=pid)
+        print err,angle_err,pp,dtheta
+
+        pub_vel(-v,dtheta)
+        rospy.sleep(0.1)
+    
+    rotate(target[2])
+    return
+
 
 
 state=State()
