@@ -48,7 +48,7 @@ def pi_2_pi(angle):
 #     pass
 
 
-def PID(err,angle_err,offset,previous_err,pid=(0.68,0.02,0.44)):
+def PID(err,angle_err,previous_err,pid=(0.68,0.02,0.44)):
     kp=pid[0]
     ki=pid[1]
     kd=pid[2]
@@ -61,7 +61,9 @@ def PID(err,angle_err,offset,previous_err,pid=(0.68,0.02,0.44)):
     d=angle_err
     pid=(p,i,d)
 
-    return offset-kp*p-ki*i-kd*d,pid
+    previous_err.append(err)
+
+    return -kp*p-ki*i-kd*d,pid
 
     pass
 
@@ -87,6 +89,22 @@ def get_error(x,y,target):
     d=(a*x+b*y+c)/(a**2+b**2)
 
     return d
+
+def distance_to_target(x,y,target):
+    x=target[0]
+    y=target[1]
+    theta=target[2]
+
+    a = -np.sin(theta)#line[0][1] - line[1][1]
+    b = np.cos(theta)#line[1][0] - line[0][0]
+    # c = line[0][0] *line[1][1] - line[1][0] * line[0][1]
+    c= -a*x-b*y
+
+    d=(a*x+b*y+c)/(a**2+b**2)
+
+    return -d
+
+    pass
     # if tt.isstright:
     #     a,b,c=getLinePara(lm)
     #     d=abs(a*x+b*y+c)/(a**2+b**2)

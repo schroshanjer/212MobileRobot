@@ -35,8 +35,8 @@ class PathPlanningNode:
         #self.manual_control_msg=None
 
         self.count=0
-	self.rotation=False
-	self.rot_rad_left=0
+        self.rotation=False
+        self.rot_rad_left=0
 
         # listen to input drive commands and laser scans
         
